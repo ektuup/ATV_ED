@@ -26,6 +26,7 @@ void finalizar_fila(Queue* q){
 	q->tail = NULL;
 }
 
+//procura o no antecessor que contem o valor menor do que o "valor_prioridade"
 no* procurar_prioridade(Queue* q, int valor_prioridade){
 	no* controle = q->head;
 	while(controle->proximo_cliente != NULL && valor_prioridade <= controle->proximo_cliente->valor_prioridade){
@@ -63,7 +64,6 @@ void inserir_novo_cliente_p(Queue* q, int valor_prioridade, char nome_cliente[])
 	if(novo_cliente->proximo_cliente == NULL){
 		q->tail = novo_cliente;
 	}
-	//obs: as prioridades repetidas ja foram tratadas
 }
 
 void inserir_novo_cliente_sp(Queue* q, char nome_cliente[]){
@@ -84,46 +84,48 @@ void inserir_novo_cliente_sp(Queue* q, char nome_cliente[]){
 
 }
 
+void remover_cliente(Queue* f, int quantidade_remover){
+	int cont = 0;
+	no* controle = f->head;
+	while(controle != NULL && cont != quantidade_remover){
+		no* aux = controle;
+		f->head = controle->proximo_cliente;
+		controle = controle->proximo_cliente;
+		free(aux);
+		cont++;
+	}	
+}
+
 void atender_cliente(Queue* sp, Queue* p){
 	// sp = sem prioridade, p = com prioridade
+	if(sp->head ==  NULL && p->head == NULL){
+		printf("a fila está vazia.\n");
+		return;
+	}
+
+	// se nao tiver pessoas na fila com prioridade, atenda 3 ou mais clientes da fila sem prioridade
 	if(p->head == NULL){
-		int cont = 0;
-		no* controle = sp->head;
-		while(controle != NULL && cont != 3){
-			no* aux = controle;
-			sp->head = controle->proximo_cliente;
-			controle = controle->proximo_cliente;
-			free(aux);
-			cont++;
-		}
+		remover_cliente(sp,3);
 	}
 	else{
+		//há pessoas com prioridade, mas tem as pessoas sem prioridades necessarias para a politica?
 		no* controle = sp->head;
 		int cont = 0;
 		while(controle != NULL && cont != 3){
 			cont++;
 			controle = controle->proximo_cliente;
-		}
-
+		} // ao final desse bloco teremos quantas pessoas tem na fial sem prioridade
 		if(cont == 3){
-			for (int i = 0; i < 3; ++i){
-				no* aux = sp->head;
-				sp->head = sp->head->proximo_cliente;
-				free(aux);
-			}
+			remover_cliente(sp,3);
+			//logo apos removemos uma pessoa da fila com prioridade
 			no* aux = p->head;
 			p->head = p->head->proximo_cliente;
 			free(aux);
+			// cumprindo a politica
 		}else{
-			int cont = 0;
-			no* controle = p->head;
-			while(controle != NULL && cont != 3){
-				no* aux = controle;
-				p->head = controle->proximo_cliente;
-				free(aux);
-				cont++;
-				controle = controle->proximo_cliente;
-			}
+			//e se nao tiver pessoas sem prioridade o suficiente para a politica?
+			remover_cliente(p,3);
+			//retiramos 3 ou mais da fila com prioridade
 		}
 	}
 }
@@ -139,9 +141,9 @@ void mostrar_todos_clientes(Queue* q){
 	int indice_fila = 1;
 	while(controle != NULL){
 		if(controle->valor_prioridade != 0)
-			printf("cliente %d: %s -> prioridade: %d\n", indice_fila, controle->nome_cliente, controle->valor_prioridade);
+			printf("cliente %d: %s* -> prioridade: %d\n", indice_fila, controle->nome_cliente, controle->valor_prioridade);
 		else
-			printf("cliente %d: %s*\n", indice_fila, controle->nome_cliente);
+			printf("cliente %d: %s\n", indice_fila, controle->nome_cliente);
 		controle = controle->proximo_cliente;
 		indice_fila++;
 	}
@@ -155,14 +157,17 @@ Queue* iniciar_fila(){
 }
 
 void menu(Queue* nova_fila_p, Queue* nova_fila_sp){
-	int op = 0;
-	do{
-		printf("1. chegada de pessoa para atendimento\n");
-		printf("2. atendimento de uma pessoa\n");
-		printf("3. listar todas as pessoas da fila\n");
-		printf("4. sair\n");
+	while(1){
+		int op = 0;
+		printf("-----------------------------------------\n");
+		printf("1. Chegada de pessoa para atendimento\n");
+		printf("2. Atendimento de uma pessoa\n");
+		printf("3. Listar todas as pessoas da fila\n");
+		printf("4. Sair\n");
+		printf("-----------------------------------------\n");
 
-		scanf("%d", &op);
+
+		scanf(" %d", &op);
 
 		if(op == 1){
 			char nome_cliente[50]; 
@@ -176,7 +181,7 @@ void menu(Queue* nova_fila_p, Queue* nova_fila_sp){
 			scanf("%d", &op_prioridade);
 
 			if(op_prioridade == 1){
-				printf("Inseira o valor da prioridade: \n");
+				printf("inseira o valor da prioridade: \n");
 				scanf("%d", &valor_prioridade);
 				inserir_novo_cliente_p(nova_fila_p, valor_prioridade, nome_cliente);
 			}else{
@@ -186,22 +191,56 @@ void menu(Queue* nova_fila_p, Queue* nova_fila_sp){
 			printf("cliente inserido com sucesso.\n");
 		}
 
-		if(op == 2)
+		else if(op == 2){
 			atender_cliente(nova_fila_sp, nova_fila_p);
+		}
 
-		if(op == 3){
+		else if(op == 3){
 			printf("--- fila com prioridade ---\n");
 			mostrar_todos_clientes(nova_fila_p);
 			printf("--- fila sem prioridade ---\n");
-			mostrar_todos_clientes(nova_fila_sp);	
+			mostrar_todos_clientes(nova_fila_sp);
 		}
-	}while(op != 4);
+
+		else if(op == 4){
+		    if(nova_fila_p->head == NULL && nova_fila_sp->head == NULL){
+		    	printf("encerrando programa...\n");
+		        break;
+		    } else {
+		        printf("ainda há pessoas na fila. \n");
+		    }
+		}
+		else
+		    printf("opção inválida\n");
+	}
 }
 
 int main()
 {
+	system("clear");
 	Queue* nova_fila_p = iniciar_fila();
 	Queue* nova_fila_sp = iniciar_fila();
+
+	inserir_novo_cliente_p(nova_fila_p, 13, "p13");
+	inserir_novo_cliente_p(nova_fila_p, 12, "p12");
+	inserir_novo_cliente_p(nova_fila_p, 11, "p11");
+	inserir_novo_cliente_p(nova_fila_p, 8, "p8");
+	inserir_novo_cliente_p(nova_fila_p, 7, "p7");
+	inserir_novo_cliente_p(nova_fila_p, 5, "p5");
+
+	inserir_novo_cliente_sp(nova_fila_sp, "p1");
+	inserir_novo_cliente_sp(nova_fila_sp, "p2");
+	inserir_novo_cliente_sp(nova_fila_sp, "p3");
+	inserir_novo_cliente_sp(nova_fila_sp, "p4");
+	inserir_novo_cliente_sp(nova_fila_sp, "p6");
+	inserir_novo_cliente_sp(nova_fila_sp, "p9");
+	inserir_novo_cliente_sp(nova_fila_sp, "p10");
+	inserir_novo_cliente_sp(nova_fila_sp, "p14");
+	inserir_novo_cliente_sp(nova_fila_sp, "p15");
+	inserir_novo_cliente_sp(nova_fila_sp, "p16");
+	inserir_novo_cliente_sp(nova_fila_sp, "p17");
+	inserir_novo_cliente_sp(nova_fila_sp, "p18");
+	inserir_novo_cliente_sp(nova_fila_sp, "p19");
 
 	menu(nova_fila_p, nova_fila_sp);
 
@@ -209,3 +248,29 @@ int main()
 	finalizar_fila(nova_fila_sp);
 	return 0;
 }
+
+// ta faltando atualizar o tail na hora de atender, por enquanto isso ainda nao deu problema :D
+
+/* caso teste 1: 
+	inserir_novo_cliente_p(nova_fila_p, 13, "p13");
+	inserir_novo_cliente_p(nova_fila_p, 12, "p12");
+	inserir_novo_cliente_p(nova_fila_p, 11, "p11");
+	inserir_novo_cliente_p(nova_fila_p, 8, "p8");
+	inserir_novo_cliente_p(nova_fila_p, 7, "p7");
+	inserir_novo_cliente_p(nova_fila_p, 5, "p5");
+
+	inserir_novo_cliente_sp(nova_fila_sp, "p1");
+	inserir_novo_cliente_sp(nova_fila_sp, "p2");
+	inserir_novo_cliente_sp(nova_fila_sp, "p3");
+	inserir_novo_cliente_sp(nova_fila_sp, "p4");
+	inserir_novo_cliente_sp(nova_fila_sp, "p6");
+	inserir_novo_cliente_sp(nova_fila_sp, "p9");
+	inserir_novo_cliente_sp(nova_fila_sp, "p10");
+	inserir_novo_cliente_sp(nova_fila_sp, "p14");
+	inserir_novo_cliente_sp(nova_fila_sp, "p15");
+	inserir_novo_cliente_sp(nova_fila_sp, "p16");
+	inserir_novo_cliente_sp(nova_fila_sp, "p17");
+	inserir_novo_cliente_sp(nova_fila_sp, "p18");
+	inserir_novo_cliente_sp(nova_fila_sp, "p19");
+	inserir_novo_cliente_sp(nova_fila_sp, "p20");
+*/
