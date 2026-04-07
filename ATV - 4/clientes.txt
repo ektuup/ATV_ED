@@ -1,0 +1,16 @@
+Glaucio;20
+Artur;18
+Heytor;21
+Luzia; 65
+Antonia;60
+Marina;62
+Karina;40
+Eliza;6
+Ana;18
+Jose;84
+Gemesson;85
+Joao;35
+Maria;76
+Francisca;68
+Helder;18
+Luiz;56
