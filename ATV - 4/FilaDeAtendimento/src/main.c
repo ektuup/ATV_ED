@@ -6,15 +6,42 @@
 #define or ||
 #define not !
 #define mod %
+
 #define MAX_PESSOAS 128
 #define IDADE_PRIORITARIA_MINIMA 60
-#define PESSOA_INVALIDA (Pessoa){(String){""}, -1}
 
 typedef enum{NORMAL, HIGH}Priority;
 
 typedef struct{
     char data[64];
 }String;
+
+void Header(){
+    printf("----------------FILA-DE-ATENDIMENTO----------------\n");
+}
+
+int Menu(){
+    String op;
+    char dig;
+    Header();
+    printf("Politica de prioridade: Pessoas com a partir de\n60 anos tem prioridade na fila\n");
+
+    printf("informe uma opção:\n\n"
+           "\t1 - chegada de pessoa para atendimento\n"
+           "\t2 - Atendimento de uma pesssoa\n"
+           "\t3 - Listar todas as pessoas da fila\n"
+           "\t4 - Ler arquivo de atendimento\n"
+           "\t0 - Sair\n"
+    );
+    
+    while(1){
+        scanf(" %63[^\n]", op.data);
+        dig = op.data[0];
+        if(strlen(op.data) == 1 && ('0' <= dig && dig <= '4')) break;
+        printf("Informe uma opcao valida! (0, 1, 2, 3 ou 4)\n");
+    }
+    return dig;
+}
 
 String new_String(const char* str){
     String S;
@@ -33,18 +60,55 @@ typedef struct Pessoa{
 }Pessoa;
 
 //construtor de Pessoa
-typedef struct node{
-    Pessoa data;
-    struct node* next;
-}node;
-
 Pessoa new_Pessoa(String nome, int idade){ 
-    return (Pessoa){nome, idade};
+    Pessoa p = {nome, idade};
+    return p;
 }
 
 Priority getPriority(Pessoa p){
     return (p.idade < IDADE_PRIORITARIA_MINIMA) ? NORMAL : HIGH;
 }
+
+typedef struct{
+    int atendidos_Spr, atendidos_Cpr, total_atendidos;
+    float percent_Spr, percent_Cpr;
+    Pessoa atendidas[MAX_PESSOAS];
+}Estatisticas;
+Estatisticas results;
+
+Estatisticas new_Estatisticas(){
+    Estatisticas aux = {0, 0, 0, 0, 0};
+    return aux;
+}
+
+void printPessoasAtendidas(){
+    printf("\nPessoas atendidas:\n");
+    for(int i = 0; i < results.total_atendidos; i++){
+        Pessoa p = results.atendidas[i];
+        printf("%d - %s%s\n", i + 1, p.prioridade == HIGH ? "*" : "", p.nome.data);
+    }
+}
+
+void printEstatisticas(){
+    printf("-------------------ESTATISTICAS-------------------\n");
+    results.percent_Cpr = results.total_atendidos ? (100.0 * results.atendidos_Cpr)/results.total_atendidos : 0;
+    results.percent_Spr = results.total_atendidos ? (100.0 * results.atendidos_Spr)/results.total_atendidos : 0;
+    printf("Total de pessoas atendidas: %d\n"
+            "Total de pessoas atendidas com prioridade: %d (%.2f%%)\n"
+            "Total de pessoas atendidas sem prioridade: %d (%.2f%%)\n",
+            results.total_atendidos,
+            results.atendidos_Cpr,
+            results.percent_Cpr,
+            results.atendidos_Spr,
+            results.percent_Spr
+    );
+    printPessoasAtendidas();
+}
+
+typedef struct node{
+    Pessoa data;
+    struct node* next;
+}node;
 
 node* new_node(Pessoa p){
     node* new = malloc(sizeof(node));
@@ -96,8 +160,6 @@ int IsEmpty(PriorityQueue* pq, Priority p){
 Pessoa deQueue(PriorityQueue* pq){
     //tira da fila normal enquant cont < 3 e a fila normal nao ser vazia.
     //se cont == 3 ou a fila normal estar vazia, tira da de prioridade alta.
-
-    if(pq->size == 0) return PESSOA_INVALIDA;
     node* aux = NULL;
     if(pq->contDequeue == 0 and not IsEmpty(pq, HIGH)){
         aux = pq->highPriority;
@@ -110,7 +172,7 @@ Pessoa deQueue(PriorityQueue* pq){
         pq->contDequeue = (pq->contDequeue + 1) mod 4;
     }else if(not IsEmpty(pq, HIGH)){
         aux = pq->highPriority;
-        pq->highPriority = pq->highPriority->next;
+        pq->highPriority = pq->highPriority->next; 
         pq->contDequeue = (pq->contDequeue + 1) mod 4;
     }
     pq->size--;
@@ -121,23 +183,14 @@ Pessoa deQueue(PriorityQueue* pq){
 
 void delete_priorityQueue(PriorityQueue** pq){
     if(pq == NULL || *pq == NULL) return;
-    node* aux = (*pq)->highPriority;
-    while(aux != NULL){
-        node* temp = aux;
-        aux = aux->next;
-        free(temp);
-    }
-    aux = (*pq)->normalPriority;
-    while(aux != NULL){
-        node* temp = aux;
-        aux = aux->next;
-        free(temp);
+    while((*pq)->size){
+        deQueue(*pq);
     }
     free(*pq);
     (*pq) = NULL;
 }
 
-void print_priorityQueue(PriorityQueue* pq){
+void printpriorityQueue(PriorityQueue* pq){
     PriorityQueue *aux = new_priorityQueue();
     Pessoa p;
     while(pq->size){
@@ -151,6 +204,7 @@ void print_priorityQueue(PriorityQueue* pq){
     }
     delete_priorityQueue(&aux);
 }
+
 
 int ReadFile(const char* filename, PriorityQueue* pq){
     FILE* arq = fopen(filename, "r");
@@ -186,33 +240,6 @@ int ReadFile(const char* filename, PriorityQueue* pq){
     return cont;
 }
 
-void Header(){
-    printf("----------------FILA-DE-ATENDIMENTO----------------\n");
-}
-
-int Menu(){
-    String op;
-    char dig;
-    Header();
-    printf("Politica de prioridade: Pessoas com a partir de\n60 anos tem prioridade na fila\n");
-
-    printf("informe uma opção:\n\n"
-           "\t1 - chegada de pessoa para atendimento\n"
-           "\t2 - Atendimento de uma pesssoa\n"
-           "\t3 - Listar todas as pessoas da fila\n"
-           "\t4 - Ler arquivo de atendimento\n"
-           "\t0 - Sair\n"
-    );
-    
-    while(1){
-        scanf(" %63[^\n]", op.data);
-        dig = op.data[0];
-        if(strlen(op.data) == 1 && ('0' <= dig && dig <= '4')) break;
-        printf("Informe uma opcao valida! (0, 1, 2, 3 ou 4)\n");
-    }
-    return dig;
-}
-
 Pessoa getPessoa(){
     Pessoa p;
     printf("Informe o nome da pessoa: ");
@@ -225,43 +252,45 @@ Pessoa getPessoa(){
     return p;
 }
 
+void ChegadaDePessoa(PriorityQueue* pq, Pessoa p){
+    enQueue(pq, p);
+    printf("%s foi inserido(a) na fila\n", p.nome.data);
+}
+
+void AtendimentoDePessoa(PriorityQueue* pq){
+    Pessoa atendida;
+    if(pq->size){
+        atendida = deQueue(pq);
+        printf("%s foi atendido(a)\n", atendida.nome.data);
+
+        (atendida.prioridade == HIGH) ? results.atendidos_Cpr++ : results.atendidos_Spr++;
+        results.atendidas[results.total_atendidos++] = atendida;
+    }else{
+        printf("Fila vazia\n");
+    }
+}
+
 int main(){
+    results = new_Estatisticas();
     PriorityQueue* fila = new_priorityQueue();
     const char* filename = "clientes.txt";
-    Pessoa pessoas[MAX_PESSOAS], atendida;
 
-    int cont_atendidas = 0;
-    int cont_Cpr = 0, cont_Spr = 0; 
-
-    int op;
     system("clear");
     while(1){
-        op = Menu();
+        int op = Menu();
         switch(op){
             case '1':
+                system("clear");
                 Pessoa aux = getPessoa();
-                system("clear");   
-                enQueue(fila, aux);
-                printf("%s foi inserido(a) na fila\n", aux.nome.data);
+                ChegadaDePessoa(fila, aux);
                 break;
             case '2':
                 system("clear");   
-                if(fila->size){
-                    atendida = deQueue(fila);
-                    cont_atendidas++;
-                    printf("%s foi atendido(a) na fila com prioridade %s\n", 
-                        atendida.nome.data, (atendida.prioridade == HIGH) ? "Alta" : "Normal"
-                    );
-                    if(atendida.prioridade == HIGH) cont_Cpr++;
-                    else cont_Spr++;
-
-                }else{
-                    printf("Fila vazia\n");
-                }
+                AtendimentoDePessoa(fila);
                 break;
             case '3':
                 system("clear");  
-                print_priorityQueue(fila);
+                printpriorityQueue(fila);
                 break;
             case '4':
                 system("clear");  
@@ -270,22 +299,17 @@ int main(){
                 break;
             case '0':
                 if(fila->size){
-                    printf("O programa so finaliza quando nao ha mais pessoas na fila de atendimento\n");
+                    system("clear");  
+                    printf("Ainda ha %d pessoas na fila.\n"
+                        "O programa so finaliza quando nao ha mais ninguem na fila de atendimento\n",
+                        fila->size
+                    );
                     continue;
                 }
                 system("clear");  
-                Header();
-                float percento_Cpr = cont_atendidas ? ((float) cont_Cpr * 100)/cont_atendidas : 0;
-                float percento_Spr = cont_atendidas ? ((float)cont_Spr * 100)/cont_atendidas : 0;
-                printf("Total de pessoas atendidas: %d\n"
-                        "Total de pessoas atendidas com prioridade: %d (%.2f%%)\n"
-                        "Total de pessoas atendidas sem prioridade: %d (%.2f%%)\n",
-                     cont_atendidas, cont_Cpr, percento_Cpr, cont_Spr, percento_Spr
-                    );
+                printEstatisticas();
+                delete_priorityQueue(&fila);
                 return 0;
         }
     }
-
-    delete_priorityQueue(&fila);
-    return 0;
 }
