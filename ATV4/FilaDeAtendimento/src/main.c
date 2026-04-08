@@ -29,7 +29,7 @@ int main(){
                 break;
             case '4':
                 ClearScreen();  
-                printf("Informe o nome do arquivo que voce deseja")
+                // printf("Informe o nome do arquivo que voce deseja")
                 lido = ReadFile(filename, fila);
                 printf("%s", lido ? "Arquivo lido com sucesso!\n" : "Falha ao ler o arquivo\n");
                 break;
