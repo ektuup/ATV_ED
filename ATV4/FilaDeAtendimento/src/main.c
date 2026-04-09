@@ -6,9 +6,9 @@ Estatisticas results;
 int main(){
     results = new_Estatisticas();
     PriorityQueue* fila = new_priorityQueue();
-    const char* filename = "clientes.txt";
+    String filename;
     Pessoa aux;
-    int flag = 1, lido;
+    int flag = 1, enter;
 
     ClearScreen();
     while(flag){
@@ -25,12 +25,16 @@ int main(){
                 break;
             case '3':
                 ClearScreen();  
+                Header();
                 printpriorityQueue(fila);
+                printf("Pressione Enter para voltar ao menu...\n");
+                getchar(); getchar();
+                ClearScreen();
                 break;
             case '4':
                 ClearScreen();  
-                lido = ReadFile(filename, fila);
-                printf("%s", lido ? "Arquivo lido com sucesso!\n" : "Falha ao ler o arquivo\n");
+                filename = getFilename();
+                LerDoArquivo(filename, fila);
                 break;
             case '0':
                 if(fila->size){
@@ -42,10 +46,11 @@ int main(){
                 }else{
                     flag = 0;
                 }
-            }
+                break;
         }
-        ClearScreen();  
-        printEstatisticas();
-        delete_priorityQueue(&fila);
-        return 0;
     }
+    ClearScreen();  
+    printEstatisticas();
+    delete_priorityQueue(&fila);
+    return 0;
+}

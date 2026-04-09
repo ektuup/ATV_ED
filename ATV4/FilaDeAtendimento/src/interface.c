@@ -19,7 +19,7 @@ int Menu(){
     printf("Politica de prioridade: Pessoas com a partir de\n60 anos tem prioridade na fila\n");
 
     printf("informe uma opção:\n\n"
-           "\t1 - chegada de pessoa para atendimento\n"
+           "\t1 - Chegada de pessoa para atendimento\n"
            "\t2 - Atendimento de uma pesssoa\n"
            "\t3 - Listar todas as pessoas da fila\n"
            "\t4 - Ler arquivo de atendimento\n"
@@ -59,8 +59,10 @@ void printEstatisticas(){
     printPessoasAtendidas();
 }
 
-int ReadFile(const char* filename, PriorityQueue* pq){
-    FILE* arq = fopen(filename, "r");
+int ReadFile(String filename, PriorityQueue* pq){
+    FILE* arq = fopen(filename.data, "r");
+    if(arq == NULL) return -1;
+
     String line = new_String(""), nome;
     int cont = 0, olha, idade;
     
@@ -94,6 +96,7 @@ int ReadFile(const char* filename, PriorityQueue* pq){
 }
 
 Pessoa getPessoa(){
+    Header();
     Pessoa p;
     printf("Informe o nome da pessoa: ");
     scanf(" %63[^\n]", p.nome.data);
@@ -120,5 +123,27 @@ void AtendimentoDePessoa(PriorityQueue* pq){
         results.atendidas[results.total_atendidos++] = atendida;
     }else{
         printf("Fila vazia\n");
+    }
+}
+
+String getFilename(){
+    String filename;
+    Header();
+    printf("informe o nome do arquivo que voce quer ler (nome.txt):\n");
+    scanf(" %63[^\n]", filename.data);
+    
+    return filename;
+}
+
+void LerDoArquivo(String filename, PriorityQueue* pq){    
+    int lido = ReadFile(filename, pq);
+
+    ClearScreen();
+    if(lido > 0){
+        printf("Arquivo lido com sucesso!\n");
+    }else if(lido == 0){
+        printf("Falha ao ler o arquivo\n");
+    }else if(lido == -1){
+        printf("Arquivo nao encontrado\n");
     }
 }

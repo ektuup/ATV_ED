@@ -82,6 +82,7 @@ void delete_priorityQueue(PriorityQueue** pq){
 void printpriorityQueue(PriorityQueue* pq){
     PriorityQueue *aux = new_priorityQueue();
     Pessoa p;
+    printf("Pessoas na fila de atendimento:\n");
     while(pq->size){
         p = deQueue(pq);
         printf("%s%s\n", p.prioridade == HIGH ? "*" : "", p.nome.data);
