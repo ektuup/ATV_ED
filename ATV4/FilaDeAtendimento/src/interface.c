@@ -17,16 +17,17 @@ int Menu(){
     printf("informe uma opção:\n\n"
            "\t1 - Chegada de pessoa para atendimento\n"
            "\t2 - Atendimento de uma pesssoa\n"
-           "\t3 - Listar todas as pessoas da fila\n"
-           "\t4 - Ler arquivo de atendimento\n"
-           "\t5 - Atender Geral\n"
+           "\t3 - Atender Geral\n"
+           "\t4 - Listar todas as pessoas da fila\n"
+           "\t5 - Listar filas separadas\n"
+           "\t6 - Ler arquivo de atendimento\n"
            "\t0 - Sair\n"
     );
     
     while(1){
         scanf(" %63[^\n]", op.data);
         dig = op.data[0];
-        if(strlen(op.data) == 1 && ('0' <= dig && dig <= '5')) break;
+        if(strlen(op.data) == 1 && ('0' <= dig && dig <= '6')) break;
         printf("Informe uma opcao valida! (0, 1, 2, 3 ou 4)\n");
     }
     return dig;
@@ -148,4 +149,50 @@ void EnterClear(){
     printf("Pressione Enter para voltar ao menu...\n");
     getchar(); getchar();
     ClearScreen();
+}
+
+void MostrarPessoasNaFila(PriorityQueue* pq){
+    Pessoa p;
+    int i = 0;
+    node* auxHigh = pq->highPriority, *auxNormal = pq->normalPriority;
+    RecentList* S = new_RecentList();
+    Header();
+    while(auxHigh or auxNormal){
+        if(not in_list(S, HIGH) and auxHigh != NULL){
+            p = auxHigh->data;
+            auxHigh = auxHigh->next;
+        }else if(auxNormal != NULL){
+            p = auxNormal->data;
+            auxNormal = auxNormal->next;
+        }else if(auxHigh != NULL){
+            p = auxHigh->data;
+            auxHigh = auxHigh->next;
+        }
+        printf("%d - %s%s\n", ++i, p.prioridade == HIGH ? "*" : "", p.nome.data);
+        list_add(S, p);
+    }
+    delete_Recentlist(S);
+}
+
+void MostrarFilasSeparadas(PriorityQueue* pq){
+    node* aux = pq->highPriority;
+    int i = 0;
+    Header();
+
+    printf("Pessoas com Prioridade:\n\n");
+    while(aux){
+        printf("%d - *%s\n", ++i, aux->data.nome.data);
+        aux = aux->next;
+    }
+    putchar('\n');
+
+    i = 0;
+    aux = pq->normalPriority;
+    printf("Pessoas sem Prioridade:\n\n");
+
+    while(aux){
+        printf("%d - %s\n", ++i, aux->data.nome.data);
+        aux = aux->next;
+    }
+    putchar('\n');
 }

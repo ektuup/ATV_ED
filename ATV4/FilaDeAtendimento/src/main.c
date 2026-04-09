@@ -27,19 +27,23 @@ int main(){
                 break;
             case '3':
                 ClearScreen();
-                Header();
-                printpriorityQueue(fila);
+                AtenderGeral(fila);
                 EnterClear();
                 break;
             case '4':
-                ClearScreen();  
-                filepath = getFilePath();
-                LerDoArquivo(filepath, fila);
+                ClearScreen();
+                MostrarPessoasNaFila(fila);
+                EnterClear();
                 break;
             case '5':
                 ClearScreen();
-                AtenderGeral(fila);
+                MostrarFilasSeparadas(fila);
                 EnterClear();
+                break;
+            case '6':
+                ClearScreen();  
+                filepath = getFilePath();
+                LerDoArquivo(filepath, fila);
                 break;
             case '0':
                 if(fila->size){

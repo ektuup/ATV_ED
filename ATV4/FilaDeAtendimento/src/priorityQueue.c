@@ -27,21 +27,21 @@ int IsEmpty(PriorityQueue* pq, Priority p){
 }
 
 Pessoa deQueue(PriorityQueue* pq){
-    //tira da fila normal enquant cont < 3 e a fila normal nao ser vazia.
-    //se contDequeue == 3 ou a fila normal estar vazia, tira da de prioridade alta.
     node* aux = NULL;
 
-    if(not in_list(pq->history, HIGH) and not IsEmpty(pq, HIGH)){    
+    //uma pessoa com prioridade só é adicionada na lista se nao houver nenhuma adição no historico dos 3 ultimos
+    //no caso do historico ter pelo menos um asterisc (EX: { , , *}), nao podemos adicionar uma pessoa de prioridade 
+    //{ , , ,}esse é o unico caso em que podemos adicionar, a menos que a lista de pessoas com prioridade normal esteja vazia
+
+    if(not in_list(pq->history, HIGH) and not IsEmpty(pq, HIGH)){
         aux = pq->highPriority;
         pq->highPriority = pq->highPriority->next;
-        //uso do mod 4 porque se contdeQueue == 0, entao tira da prioridade, se for 1, 2 ou 3 tira do normal
     }else if(not IsEmpty(pq, NORMAL)){
         aux = pq->normalPriority;
         pq->normalPriority = pq->normalPriority->next;
     }else if(not IsEmpty(pq, HIGH)){
         aux = pq->highPriority;
-        pq->highPriority = pq->highPriority->next; 
-        //caso o contDequeue seja diferente de 0, mas nao hajam pessoas sem prioridade na fila, remove os com prioridade
+        pq->highPriority = pq->highPriority->next;
     }
     list_add(pq->history, aux->data);
 
@@ -59,48 +59,4 @@ void delete_priorityQueue(PriorityQueue** pq){
     delete_Recentlist((*pq)->history);
     free(*pq);
     (*pq) = NULL;
-}
-
-void printpriorityQueue(PriorityQueue* pq){
-    // node* aux = pq->highPriority;
-    // int i = 0;
-    // printf("Pessoas com Prioridade:\n\n");
-
-    // while(aux){
-    //     printf("%d - *%s\n", ++i, aux->data.nome.data);
-    //     aux = aux->next;
-    // }
-    // putchar('\n');
-
-    // i = 0;
-    // aux = pq->normalPriority;
-    // printf("Pessoas sem Prioridade:\n\n");
-
-    // while(aux){
-    //     printf("%d - %s\n", ++i, aux->data.nome.data);
-    //     aux = aux->next;
-    // }
-    // putchar('\n');
-
-    Pessoa p;
-    int i = 0;
-    node* auxHigh = pq->highPriority, *auxNormal = pq->normalPriority;
-    RecentList* S = new_RecentList();
-    while(auxHigh or auxNormal){
-        if(not in_list(S, HIGH) and auxHigh != NULL){    
-            p = auxHigh->data;
-            auxHigh = auxHigh->next;
-            //uso do mod 4 porque se contdeQueue == 0, entao tira da prioridade, se for 1, 2 ou 3 tira do normal
-        }else if(auxNormal != NULL){
-            p = auxNormal->data;
-            auxNormal = auxNormal->next;
-        }else if(auxHigh != NULL){
-            p = auxHigh->data;
-            auxHigh = auxHigh->next; 
-            //caso o contDequeue seja diferente de 0, mas nao hajam pessoas sem prioridade na fila, remove os com prioridade
-        }
-        printf("%d - %s%s\n", ++i, p.prioridade == HIGH ? "*" : "", p.nome.data);
-        list_add(S, p);
-    }
-    delete_Recentlist(S);
 }

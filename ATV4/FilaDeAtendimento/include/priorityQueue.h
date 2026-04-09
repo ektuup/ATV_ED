@@ -17,7 +17,6 @@ void enQueue(PriorityQueue* pq, Pessoa p);
 int IsEmpty(PriorityQueue* pq, Priority p);
 Pessoa deQueue(PriorityQueue* pq);
 void delete_priorityQueue(PriorityQueue** pq);
-void printpriorityQueue(PriorityQueue* pq);
 Priority getPriority(Pessoa p);
 
 #endif

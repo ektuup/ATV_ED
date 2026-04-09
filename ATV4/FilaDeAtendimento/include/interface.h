@@ -15,5 +15,7 @@ void ChegadaDePessoa(PriorityQueue* pq, Pessoa p);
 void LerDoArquivo(String filename, PriorityQueue* pq);
 void AtendimentoDePessoa(PriorityQueue* pq);
 String getFilePath();
+void MostrarPessoasNaFila(PriorityQueue* pq);
+void MostrarFilasSeparadas(PriorityQueue* pq);
 
 #endif
