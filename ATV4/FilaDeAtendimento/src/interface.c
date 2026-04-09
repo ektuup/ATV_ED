@@ -1,11 +1,7 @@
 #include "interface.h"
 
 void ClearScreen(){
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
+    system("clear");
 }
 
 void Header(){
