@@ -25,6 +25,11 @@ typedef struct Pessoa{
     Priority prioridade;
 }Pessoa;
 
+typedef struct node{
+    Pessoa data;
+    struct node* next;
+}node;
+
 typedef struct{
     int atendidos_Spr, atendidos_Cpr, total_atendidos;
     float percent_Spr, percent_Cpr;
@@ -45,6 +50,25 @@ static inline String new_String(const char* str){
 static inline Pessoa new_Pessoa(String nome, int idade){ 
     Pessoa p = {nome, idade};
     return p;
+}
+
+static inline node* new_node(Pessoa p){
+    node* new = malloc(sizeof(node));
+    new->data = p;
+    new->next = NULL;
+    return new;
+}
+
+static inline void addNode(node** no, node* new){
+    if(*no == NULL){
+        *no = new;
+        return;
+    }
+    node* temp = *no;
+    while(temp->next != NULL){
+        temp = temp->next;
+    }
+    temp->next = new;
 }
 
 static inline Estatisticas new_Estatisticas(){

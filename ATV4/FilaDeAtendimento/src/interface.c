@@ -19,25 +19,19 @@ int Menu(){
            "\t2 - Atendimento de uma pesssoa\n"
            "\t3 - Listar todas as pessoas da fila\n"
            "\t4 - Ler arquivo de atendimento\n"
+           "\t5 - Atender Geral\n"
            "\t0 - Sair\n"
     );
     
     while(1){
         scanf(" %63[^\n]", op.data);
         dig = op.data[0];
-        if(strlen(op.data) == 1 && ('0' <= dig && dig <= '4')) break;
+        if(strlen(op.data) == 1 && ('0' <= dig && dig <= '5')) break;
         printf("Informe uma opcao valida! (0, 1, 2, 3 ou 4)\n");
     }
     return dig;
 }
 
-void printPessoasAtendidas(){
-    printf("\nPessoas atendidas:\n");
-    for(int i = 0; i < results.total_atendidos; i++){
-        Pessoa p = results.atendidas[i];
-        printf("%d - %s%s\n", i + 1, p.prioridade == HIGH ? "*" : "", p.nome.data);
-    }
-}
 
 void printEstatisticas(){
     printf("-------------------ESTATISTICAS-------------------\n");
@@ -52,7 +46,6 @@ void printEstatisticas(){
         results.atendidos_Spr,
         results.percent_Spr
     );
-    printPessoasAtendidas();
 }
 
 int ReadFile(String filename, PriorityQueue* pq){
@@ -79,7 +72,6 @@ int ReadFile(String filename, PriorityQueue* pq){
             }
             return 0;
         }
-        if(cont == MAX_PESSOAS) return MAX_PESSOAS;
         
         enQueue(pq, new_Pessoa(nome, idade));
         cont++;
@@ -110,12 +102,22 @@ void AtendimentoDePessoa(PriorityQueue* pq){
     Pessoa atendida;
     if(pq->size){
         atendida = deQueue(pq);
-        printf("%s%s foi atendido(a)\n", atendida.prioridade == HIGH ? "*" : "", atendida.nome.data);
-        
+        printf("Pessoa chamada: %s%s\n", atendida.prioridade == HIGH ? "*" : "", atendida.nome.data);
         (atendida.prioridade == HIGH) ? results.atendidos_Cpr++ : results.atendidos_Spr++;
         results.atendidas[results.total_atendidos++] = atendida;
     }else{
         printf("Fila vazia\n");
+    }
+}
+
+void AtenderGeral(PriorityQueue* pq){
+    int i = 0;
+    printf("----------------PESSOAS-ATENDIDAS----------------\n");
+    while(pq->size){
+        Pessoa atendida = deQueue(pq);
+        printf("%d - %s%s\n", ++i, atendida.prioridade == HIGH ? "*" : "", atendida.nome.data);
+        (atendida.prioridade == HIGH) ? results.atendidos_Cpr++ : results.atendidos_Spr++;
+        results.atendidas[results.total_atendidos++] = atendida;
     }
 }
 
@@ -128,8 +130,8 @@ String getFilePath(){
     return filepath;
 }
 
-void LerDoArquivo(String filename, PriorityQueue* pq){    
-    int lido = ReadFile(filename, pq);
+void LerDoArquivo(String filepath, PriorityQueue* pq){    
+    int lido = ReadFile(filepath, pq);
 
     if(lido > 0){
         printf("Arquivo lido com sucesso!\n");
@@ -140,4 +142,10 @@ void LerDoArquivo(String filename, PriorityQueue* pq){
     }else if(lido == MAX_PESSOAS){
         printf("Erro: capacidade maxima de pessoas permitido é %d. por favor aumente a capacidade caso queira armazenar mais\n", MAX_PESSOAS);
     }
+}
+
+void EnterClear(){
+    printf("Pressione Enter para voltar ao menu...\n");
+    getchar(); getchar();
+    ClearScreen();
 }

@@ -4,12 +4,13 @@
 #include "priorityQueue.h"
 
 void Header();
+void AtenderGeral(PriorityQueue *pq);
 void ClearScreen();
 int Menu();
-void printPessoasAtendidas();
 void printEstatisticas();
 int ReadFile(String filename, PriorityQueue* pq);
 Pessoa getPessoa();
+void EnterClear();
 void ChegadaDePessoa(PriorityQueue* pq, Pessoa p);
 void LerDoArquivo(String filename, PriorityQueue* pq);
 void AtendimentoDePessoa(PriorityQueue* pq);

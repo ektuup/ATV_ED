@@ -2,15 +2,11 @@
 #define _PRIORITQUEUE_H_
 
 #include "types.h"
-
-typedef struct node{
-    Pessoa data;
-    struct node* next;
-}node;
+#include "recentList.h"
 
 typedef struct PriorityQueue{
     node* highPriority, *normalPriority;
-    int contDequeue;
+    RecentList* history;
     int size;
 }PriorityQueue;
 

@@ -5,6 +5,7 @@ Estatisticas results;
 
 int main(){
     results = new_Estatisticas();
+
     PriorityQueue* fila = new_priorityQueue();
     String filepath;
     Pessoa aux;
@@ -25,17 +26,20 @@ int main(){
                 AtendimentoDePessoa(fila);
                 break;
             case '3':
-                ClearScreen();  
+                ClearScreen();
                 Header();
                 printpriorityQueue(fila);
-                printf("Pressione Enter para voltar ao menu...\n");
-                getchar(); getchar();
-                ClearScreen();
+                EnterClear();
                 break;
             case '4':
                 ClearScreen();  
                 filepath = getFilePath();
                 LerDoArquivo(filepath, fila);
+                break;
+            case '5':
+                ClearScreen();
+                AtenderGeral(fila);
+                EnterClear();
                 break;
             case '0':
                 if(fila->size){
