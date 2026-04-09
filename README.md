@@ -1,4 +1,4 @@
-pra compilar o arquivo é necessario estar no diretorio FilaDePrioridade e digitar:
+pra compilar o arquivo da ATV4 é necessario estar no diretorio FilaDePrioridade e digitar:
 
 gcc src/*.c -Iinclude -o nome_do_executavel
 
