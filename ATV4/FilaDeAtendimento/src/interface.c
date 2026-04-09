@@ -141,8 +141,6 @@ void LerDoArquivo(String filepath, PriorityQueue* pq){
         printf("Falha ao ler o arquivo\n");
     }else if(lido == -1){
         printf("Arquivo nao encontrado\n");
-    }else if(lido == MAX_PESSOAS){
-        printf("Erro: capacidade maxima de pessoas permitido é %d. por favor aumente a capacidade caso queira armazenar mais\n", MAX_PESSOAS);
     }
 }
 

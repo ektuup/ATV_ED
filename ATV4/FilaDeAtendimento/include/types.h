@@ -10,7 +10,6 @@
 #define not !
 #define mod %
 
-#define MAX_PESSOAS 128
 #define IDADE_PRIORITARIA_MINIMA 60
 
 typedef enum{NORMAL, HIGH}Priority;
