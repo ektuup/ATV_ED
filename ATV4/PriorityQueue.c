@@ -13,7 +13,6 @@ typedef struct{
 	no* tail;
 }Queue;
 
-
 void finalizar_fila(Queue* q){
 	no* controle = q->head;
 	no* aux = NULL;
