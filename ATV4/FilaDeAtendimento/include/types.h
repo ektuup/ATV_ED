@@ -30,11 +30,6 @@ typedef struct node{
     struct node* next;
 }node;
 
-typedef struct{
-    int atendidos_Spr, atendidos_Cpr, total_atendidos;
-    float percent_Spr, percent_Cpr;
-    Pessoa atendidas[MAX_PESSOAS];
-}Estatisticas;
 
 static inline String new_String(const char* str){
     String S;
@@ -70,6 +65,11 @@ static inline void addNode(node** no, node* new){
     }
     temp->next = new;
 }
+
+typedef struct{
+    int atendidos_Spr, atendidos_Cpr, total_atendidos;
+    float percent_Spr, percent_Cpr;
+}Estatisticas;
 
 static inline Estatisticas new_Estatisticas(){
     Estatisticas aux = {0, 0, 0, 0, 0};

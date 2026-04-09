@@ -105,7 +105,6 @@ void AtendimentoDePessoa(PriorityQueue* pq){
         atendida = deQueue(pq);
         printf("Pessoa chamada: %s%s\n", atendida.prioridade == HIGH ? "*" : "", atendida.nome.data);
         (atendida.prioridade == HIGH) ? results.atendidos_Cpr++ : results.atendidos_Spr++;
-        results.atendidas[results.total_atendidos++] = atendida;
     }else{
         printf("Fila vazia\n");
     }
@@ -118,7 +117,6 @@ void AtenderGeral(PriorityQueue* pq){
         Pessoa atendida = deQueue(pq);
         printf("%d - %s%s\n", ++i, atendida.prioridade == HIGH ? "*" : "", atendida.nome.data);
         (atendida.prioridade == HIGH) ? results.atendidos_Cpr++ : results.atendidos_Spr++;
-        results.atendidas[results.total_atendidos++] = atendida;
     }
 }
 
