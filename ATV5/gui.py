@@ -8,8 +8,7 @@ class GUI:
         self.window = window
         self.file = None
         self.time_sort = None
-        
-        window.config(bg = "#222220")
+        window.config(bg = "#222220")   
         window.geometry("840x640")
 
         self.status = Label(self.window, bg = "#222220", fg = "#FFFFFF",text="")
@@ -92,6 +91,6 @@ class GUI:
         self.monitor.insert(END, f"Quantidade de elementos: {self.file.getElements()}")
         self.monitor.config(state = "disabled")
 
-window = Tk()
+window = Tk(className=" Estatisticas Insertion Sort")
 GUI(window)
 window.mainloop()
