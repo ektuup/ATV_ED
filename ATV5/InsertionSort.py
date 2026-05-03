@@ -1,4 +1,5 @@
 import time
+import os
 
 class Array:
     def __init__(self, size = 5):
@@ -28,7 +29,7 @@ class FileSort:
     def __init__(self, file):
         self.arr = Array()
         self.file = file
-        self.ord_file = "ordened_" + file
+        self.ord_file = os.path.dirname(file) + "/ordened_" + os.path.basename(file)
         self.time = 0
         self.trades = 0
 
