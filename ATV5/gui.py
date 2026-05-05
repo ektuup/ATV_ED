@@ -10,6 +10,7 @@ class GUI:
         self.time_sort = None
         window.config(bg = "#222220")   
         window.geometry("840x640")
+        window.resizable(False, False)
 
         self.status = Label(self.window, bg = "#222220", fg = "#FFFFFF",text="")
         self.status.pack(side = TOP)
@@ -23,6 +24,7 @@ class GUI:
                             font = ("Arial", 12),
                             padx = 20,
                             pady = 20)
+
         self.monitor.config(state = "disabled")
         self.monitor.pack(pady = 85, side = BOTTOM)
 
@@ -42,54 +44,94 @@ class GUI:
         frame.pack(side = TOP)
 
     def Sort(self):
-        self.status.config(text="Ordenando...")
-        self.window.update_idletasks()
+        try:
+            if self.file is None:
+                raise Exception
 
-        self.file.InsertionSort()
-        self.time_sort = self.file.getTime()
+            self.status.config(text="Ordenando...")
+            self.window.update_idletasks()
 
-        self.status.config(text="Concluído!")
+            self.file.InsertionSort()
+            self.time_sort = self.file.getTime()
 
-        self.file.OrdenedFile()
+            self.status.config(text="Concluído!")
+
+            self.file.OrdenedFile()
+        except:
+            self.monitor.config(state = 'normal')
+            self.monitor.insert(END, "Ação inválida." + "\n")
+            self.monitor.config(state = "disable")
+
 
     def chooseFile(self):
-        path = filedialog.askopenfilename()
-        self.file = FileSort(path)
-        self.status.config(text=self.file.ord_file)
-        self.file.FileReading()
+        try:
+            path = filedialog.askopenfilename()
+            self.file = FileSort(path)
+            self.status.config(text=self.file.ord_file)
+            self.file.FileReading()
+        except:
+            self.monitor.delete("1.0", END)
+            self.monitor.config(state = 'normal')
+            self.monitor.insert(END, "Ação inválida." + '\n')
+            self.monitor.config(state = "disable")
 
     def displayDisordered(self):
-        self.status.config(text="")
-        self.monitor.config(state = "normal")
-        self.monitor.delete("1.0", END)
-        with open(self.file.file, 'r', encoding = 'utf-8') as tx:
-            linha = tx.readline()
-            for i in range(10):
-                self.monitor.insert(END + "\n", linha)
+        try:
+            if self.file is None:
+                raise Exception
+
+            self.status.config(text="")
+            self.monitor.config(state = "normal")
+            self.monitor.delete("1.0", END)
+            with open(self.file.file, 'r', encoding = 'utf-8') as tx:
                 linha = tx.readline()
-        self.monitor.config(state = "disabled")
+                for i in range(10):
+                    self.monitor.insert(END + "\n", linha)
+                    linha = tx.readline()
+            self.monitor.config(state = "disabled")
+        except:
+            self.monitor.delete("1.0", END)
+            self.monitor.config(state = 'normal')
+            self.monitor.insert(END, "Ação inválida." + "\n")
+            self.monitor.config(state = "disable")
 
     def displayOrdered(self):
-        self.status.config(text="")
-        self.monitor.config(state = "normal")
-        self.monitor.delete("1.0", END)
-        self.status
-        with open(self.file.ord_file, 'r', encoding = 'utf-8') as tx:
-            linha = tx.readline()
-            for i in range(10):
-                self.monitor.insert(END + "\n", linha)
+        try:
+            if self.file is None:
+                raise Exception
+            self.status.config(text="")
+            self.monitor.config(state = "normal")
+            self.monitor.delete("1.0", END)
+            self.status
+            with open(self.file.ord_file, 'r', encoding = 'utf-8') as tx:
                 linha = tx.readline()
+                for i in range(10):
+                    self.monitor.insert(END + "\n", linha)
+                    linha = tx.readline()
 
-        self.monitor.config(state = "disabled")
+            self.monitor.config(state = "disabled")
+        except:
+            self.monitor.delete("1.0", END)
+            self.monitor.config(state = 'normal')
+            self.monitor.insert(END, "Ação inválida." + "\n")
+            self.monitor.config(state = "disable")
 
     def sortStats(self):
-        self.status.config(text="")
-        self.monitor.config(state = "normal")
-        self.monitor.delete('1.0', END)
-        self.monitor.insert(END, f"Tempo de ordenação: {self.time_sort:.10f} segundos\n") 
-        self.monitor.insert(END, f"Quantidade de trocas: {self.file.getTrades()}\n") 
-        self.monitor.insert(END, f"Quantidade de elementos: {self.file.getElements()}")
-        self.monitor.config(state = "disabled")
+        try:
+            if self.file is None:
+                raise Exception
+            self.status.config(text="")
+            self.monitor.config(state = "normal")
+            self.monitor.delete('1.0', END)
+            self.monitor.insert(END, f"Tempo de ordenação: {self.time_sort:.10f} segundos\n") 
+            self.monitor.insert(END, f"Quantidade de trocas: {self.file.getTrades()}\n") 
+            self.monitor.insert(END, f"Quantidade de elementos: {self.file.getElements()}")
+            self.monitor.config(state = "disabled")
+        except:
+            self.monitor.delete("1.0", END)
+            self.monitor.config(state = 'normal')
+            self.monitor.insert(END, "Ação inválida." + '\n')
+            self.monitor.config(state = "disable")
 
 window = Tk(className=" Estatisticas Insertion Sort")
 GUI(window)
