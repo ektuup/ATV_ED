@@ -73,12 +73,12 @@ class FileSort:
             for i in range(self.arr_sorted.len):
                 tx.write(f"{self.arr_sorted.array[i]}\n")
 
-        file_exist = os.path.isfile('sorting_times.csv')
+        file_exist = os.path.isfile('sorting_statistics.csv')
 
-        with open('sorting_times.csv', 'a') as ftimes:
+        with open('sorting_statistics.csv', 'a') as ftimes:
             writer = csv.writer(ftimes)
             if not file_exist:
-                writer.writerow(["Tempo_de_ordenação", "Número_de_elementos", "Quantidade_de_trocas"])
+                writer.writerow(["Tempo_de_ordenacao", "Numero_de_elementos", "Quantidade_de_trocas"])
 
             writer.writerow([self.time, self.arr.len, self.trades])
 

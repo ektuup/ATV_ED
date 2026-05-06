@@ -46,6 +46,10 @@ class GUI:
         frame.pack(side = TOP)
 
     def Sort(self):
+        self.status.config(text="")
+        self.monitor.config(state = "normal")
+        self.monitor.delete("1.0", END)
+        
         try:
             if self.file is None:
                 raise Exception
@@ -59,6 +63,7 @@ class GUI:
 
             self.file.OrdenedFileWrite()
         except Exception as e:
+            self.monitor.delete("1.0", END)
             self.monitor.config(state = 'normal')
             self.monitor.insert(END, f"Ação inválida: Selecione um arquivo; {e}\n")
             self.monitor.config(state = "disable")
@@ -66,6 +71,9 @@ class GUI:
 
     def chooseFile(self):
         try:
+            self.status.config(text="")
+            self.monitor.config(state = "normal")
+            self.monitor.delete("1.0", END)
             path = filedialog.askopenfilename()
             self.file = FileSort(path)
             self.status.config(text=self.file.ord_file)
@@ -75,6 +83,7 @@ class GUI:
             self.monitor.config(state = 'normal')
             self.monitor.insert(END, "Ação inválida.\n")
             self.monitor.config(state = "disable")
+        
 
     def displayDisordered(self):
         try:
@@ -91,13 +100,14 @@ class GUI:
             self.monitor.config(state = 'normal')
             self.monitor.insert(END, "Ação inválida: Selecione um arquivo\n")
             self.monitor.config(state = "disable")
+        
 
     def displayOrdered(self):
         try:
             self.status.config(text="")
             self.monitor.config(state = "normal")
             self.monitor.delete("1.0", END)
-            self.status
+
             for i in range(10):
                 self.monitor.insert(END + "\n", self.file.arr_sorted.array[i] + '\n')
 
@@ -109,13 +119,16 @@ class GUI:
             self.monitor.config(state = "disable")
 
     def sortStats(self):
+        self.status.config(text="")
+        self.monitor.config(state = "normal")
+        self.monitor.delete("1.0", END)
+        
         try:
             if self.file is None:
                 raise Exception
             time, elements, trades = self.getAverage()
-            self.status.config(text="")
-            self.monitor.config(state = "normal")
-            self.monitor.delete('1.0', END)
+
+
             self.monitor.insert(END, f"Tempo médio de ordenação: {time:.10f} segundos\n") 
             self.monitor.insert(END, f"Quantidade média de elementos: {elements}\n")
             self.monitor.insert(END, f"Quantidade média de trocas: {trades}\n") 
@@ -132,11 +145,11 @@ class GUI:
         sum_elements = 0
         sum_trades = 0
         cont = 0
-        with open('sorting_times.csv', 'r') as ftimes:
+        with open('sorting_statistics.csv', 'r') as ftimes:
             reader = csv.reader(ftimes)
 
             for line in reader:
-                if line and line[0] == "Tempo_de_ordenação":
+                if line and line[0] == "Tempo_de_ordenacao":
                     continue
 
                 if len(line) == 3:
@@ -148,7 +161,7 @@ class GUI:
     
     def getNumOfSorts(self):
         cont = 0
-        with open('sorting_times.csv', 'r') as ftimes:
+        with open('sorting_statistics.csv', 'r') as ftimes:
             reader = csv.reader(ftimes)
 
             for line in reader:
@@ -156,8 +169,8 @@ class GUI:
         
         return cont - 1; ##remove o reader
 
-     
 
-window = Tk(className=" Estatisticas Insertion Sort")
-GUI(window)
-window.mainloop()
+if __name__ == '__main__':
+    window = Tk(className=" Estatisticas Insertion Sort")
+    GUI(window)
+    window.mainloop()
