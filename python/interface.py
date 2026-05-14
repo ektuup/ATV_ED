@@ -4,7 +4,6 @@ import sys, random, csv, time, os
 
 array = SortVector()
 unordened_array = SortVector()
-
 map_sort = {
     "Bubblesort" : array.bubble_sort,
     "Selectionsort" : array.selection_sort,
@@ -16,7 +15,7 @@ map_sort = {
     "Heapsort" : array.heap_sort
 }
 
-def fwrite(name):
+def fwrite(name, array):
     with open(name, 'w') as f:
         for i in range(array.len()):
             f.write(array.at(i) + '\n')
@@ -42,17 +41,21 @@ class SortWorker(QtCore.QThread):
 
     def run(self):
         times_sorts = []
-        for algorithm, sort in map_sort.items():
+        selected_maps = {nm : func for nm, func in map_sort.items() if nm in self.selected_algorithms}
+
+        for algorithm, sort in selected_maps.items():
             array.copy(unordened_array)
             if algorithm in self.selected_algorithms:
-                print(algorithm)
                 self.progress.emit(f"Ordenando '{self.nometxt}' com {algorithm}...")
+
                 start = time.time()
                 sort()
                 end = time.time()
+
                 times_sorts.append((end - start) * 1000)
             else:
                 times_sorts.append(None)
+        
         self.finished.emit(times_sorts)
 
 class myButton(QtWidgets.QPushButton):
@@ -130,10 +133,19 @@ class myWidget(QtWidgets.QWidget):
 
     def choice_file(self):
         self.selected_files = self.checkbox_file()
-        not_exists = [s for s in self.selected_files if not os.path.exists(s)]
-        
+
+        curdir = os.getcwd()
+        nomestxt_dir = curdir + "/nomestxt/"
+        print(nomestxt_dir)
+
+        if not os.path.exists(nomestxt_dir):
+            self.label.setText("'nomestxt/' não encontrado no diretório atual")
+            return
+
+        not_exists = [s for s in self.selected_files if not os.path.exists(nomestxt_dir + s)]
+
         if len(not_exists):
-            self.label.setText(f"Arquivo(s) {not_exists} não encontrado(s) no diretório atual")
+            self.label.setText(f"Arquivo(s) {not_exists} não encontrado(s) no diretório ./nomestxt")
         
         self.selected_files = [x for x in self.selected_files if x not in not_exists]
 
@@ -152,11 +164,11 @@ class myWidget(QtWidgets.QWidget):
 
         nometxt = self._file_queue.pop(0)
         try:
-            with open(nometxt, 'r') as f:
+            with open(os.getcwd() + "/nomestxt/" + nometxt, 'r') as f:
                 for line in f:
                     unordened_array.insert(line.strip())
         except FileNotFoundError:
-            self.label.setText(f"Arquivo '{nometxt}' não encontrado no diretório atual")
+            self.label.setText(f"Arquivo '{nometxt}' não encontrado no diretório ./nomestxt")
             return
 
         self._current_file = nometxt
@@ -169,8 +181,9 @@ class myWidget(QtWidgets.QWidget):
         nometxt = self._current_file
         self.label.setText("Ordenação concluída!")
 
-        nometxt_ordened = nometxt[:-4] + "_ordened.txt"
-        fwrite(nometxt_ordened)
+        nometxt_ordened = os.getcwd() + "/nomestxt/" + nometxt[:-4] + "_ordened.txt"
+        
+        fwrite(nometxt_ordened, array)
 
         header = ["Arquivo"] + self.squares + self.linearithmics
         sidebar = [s for s in self.selected_files]
@@ -257,7 +270,6 @@ class CheckBoxWindow(QtWidgets.QDialog):
 
         self.buttons = QtWidgets.QDialogButtonBox()
 
-        # Adiciona à caixa dizendo qual a "função" de cada um (Accept ou Reject)
         self.buttons.addButton(QtWidgets.QDialogButtonBox.Ok)
         self.buttons.addButton(QtWidgets.QDialogButtonBox.Cancel)
         self.buttons.accepted.connect(self.accept)

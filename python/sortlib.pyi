@@ -23,6 +23,10 @@ class SortVector:
         """Ordena usando QuickSort"""
         ...
 
+    def quick_sort_rand(self) -> None:
+        """Ordena usando QuickSort com pivo aleatorio"""
+        ...
+
     def hibrid_merge_sort(self) -> None:
         """Ordena usando MergeSort Hibrido com Insertion"""
         ...

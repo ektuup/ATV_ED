@@ -6,9 +6,9 @@
 using namespace std;
 
 int SortVector::partition(int begin, int end){
-	string* pivo = array.data[begin];
-	int i = begin + 1, j = end;
-
+	int i = begin, j = end;
+	string* pivo = array.data[i];
+	
 	while(1){
 		while(i <= end && *array.data[i] <= *pivo) i++;
 		while(j >= begin + 1 && *array.data[j] > *pivo) j--;
@@ -70,7 +70,7 @@ void SortVector::__merge(string** aux, int begin, int mid, int end){
 }
 
 void SortVector::__hibrid_mergesort(string** aux, int begin, int end){
-	if (end - begin + 1 <= 24) {
+	if (end - begin + 1 <= 16) {
 		__insertion(begin, end);
 	}else{
 		int mid = (begin + end) >> 1;
@@ -259,27 +259,10 @@ void SortVector::Hibrid_MergeSort(){
 void SortVector::QuickSort(){
 	__quicksort(0, array.index - 1);
 }
-	
+
 SortVector::~SortVector(){
 	for(int i = 0; i < array.index; i++)
 		delete array.data[i];
 	delete[] array.data;
 	array.data = NULL;
-}
-
-
-
-int main(){
-	SortVector a;
-	a.insert("ana");
-	a.insert("paula");
-	a.insert("victor");
-	a.insert("helder");
-	a.insert("artur");
-
-	a.ShellSort();
-	for(int i = 0; i < a.len(); i++)
-		std::cout << a.at(i) << std::endl;
-
-return 0;
 }

@@ -68,14 +68,14 @@ static PyObject* SortVector_HeapSort(SortVectorObject* self, PyObject* args){
     Py_RETURN_NONE;
 }
  
-static PyObject* SortVector_Hibrid_MergeSort(SortVectorObject* self, PyObject* args){
+static PyObject* SortVector_MergeSort(SortVectorObject* self, PyObject* args){
     Py_BEGIN_ALLOW_THREADS
     self->sort_vector->MergeSort_BottomUp();
     Py_END_ALLOW_THREADS
     Py_RETURN_NONE;
 }
  
-static PyObject* SortVector_MergeSort(SortVectorObject* self, PyObject* args){
+static PyObject* SortVector_Hibrid_MergeSort(SortVectorObject* self, PyObject* args){
     Py_BEGIN_ALLOW_THREADS
     self->sort_vector->Hibrid_MergeSort();
     Py_END_ALLOW_THREADS
