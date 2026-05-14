@@ -136,7 +136,6 @@ class myWidget(QtWidgets.QWidget):
 
         curdir = os.getcwd()
         nomestxt_dir = curdir + "/nomestxt/"
-        print(nomestxt_dir)
 
         if not os.path.exists(nomestxt_dir):
             self.label.setText("'nomestxt/' não encontrado no diretório atual")
@@ -182,7 +181,7 @@ class myWidget(QtWidgets.QWidget):
         self.label.setText("Ordenação concluída!")
 
         nometxt_ordened = os.getcwd() + "/nomestxt/" + nometxt[:-4] + "_ordened.txt"
-        
+
         fwrite(nometxt_ordened, array)
 
         header = ["Arquivo"] + self.squares + self.linearithmics
