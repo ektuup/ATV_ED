@@ -1,5 +1,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <random>
+#include <time.h>
 #include "SortVector.hpp"
 
 //compilação: g++ -shared -o python/sortlib.so -fpic cpp/src/*.cpp -I /usr/include/python* -Icpp/include 
@@ -10,6 +12,7 @@ typedef struct{
 }SortVectorObject;
 
 static int SortVector_init(SortVectorObject* self, PyObject* args, PyObject* keys){
+    srand(time(NULL));
     self->sort_vector = new SortVector();
     return 0;
 }
@@ -60,6 +63,14 @@ static PyObject* SortVector_QuickSort(SortVectorObject* self, PyObject* args){
     Py_END_ALLOW_THREADS
     Py_RETURN_NONE;
 }
+
+static PyObject* SortVector_QuickSort_Random(SortVectorObject* self, PyObject* args){
+    Py_BEGIN_ALLOW_THREADS
+    self->sort_vector->QuickSort_Random();
+    Py_END_ALLOW_THREADS
+    Py_RETURN_NONE;
+}
+ 
  
 static PyObject* SortVector_HeapSort(SortVectorObject* self, PyObject* args){
     Py_BEGIN_ALLOW_THREADS
@@ -124,6 +135,7 @@ static PyObject* SortVector_exchange(SortVectorObject* self, PyObject* args){
     {"clear", (PyCFunction)SortVector_clear, METH_NOARGS, "Esvazia o vetor"},
     {"copy", (PyCFunction)SortVector_copy, METH_VARARGS, "Copia outro SortVector"},
     {"quick_sort", (PyCFunction)SortVector_QuickSort, METH_NOARGS, "Ordena usando QuickSort"},
+    {"quick_sort_rand", (PyCFunction)SortVector_QuickSort_Random, METH_NOARGS, "Ordena usando QuickSort"},
     {"shell_sort", (PyCFunction)SortVector_ShellSort, METH_NOARGS, "Ordena usando ShellSort"},
     {"heap_sort", (PyCFunction)SortVector_HeapSort, METH_NOARGS, "Ordena usando HeapSort"},
     {"bubble_sort", (PyCFunction)SortVector_BubbleSort, METH_NOARGS, "Ordena usando BubbleSort"},

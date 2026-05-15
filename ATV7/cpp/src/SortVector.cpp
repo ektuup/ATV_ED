@@ -2,12 +2,31 @@
 #include <string>
 #include <cmath>
 #include "SortVector.hpp"
+#include <random>
 
 using namespace std;
 
 int SortVector::partition(int begin, int end){
 	int i = begin, j = end;
 	string* pivo = array.data[i];
+	
+	while(1){
+		while(i <= end && *array.data[i] <= *pivo) i++;
+		while(j >= begin + 1 && *array.data[j] > *pivo) j--;
+		if(i >= j) break;
+		std::swap(array.data[i], array.data[j]);
+		i++, j--;
+	}
+	std::swap(array.data[j], array.data[begin]);
+	return j;
+}
+
+int SortVector::partition_random(int begin, int end){
+	int index_pivo = begin + (rand() % (end - begin + 1));
+	std::swap(array.data[index_pivo], array.data[begin]);
+	
+	string* pivo = array.data[begin];
+	int i = begin, j = end;
 	
 	while(1){
 		while(i <= end && *array.data[i] <= *pivo) i++;
@@ -36,6 +55,14 @@ void SortVector::__quicksort(int begin, int end){
 	int p = partition(begin, end);
 	__quicksort(begin, p - 1);
 	__quicksort(p + 1, end);
+}
+
+void SortVector::__quicksort_random(int begin, int end){
+	if (begin >= end) return;
+
+	int p = partition_random(begin, end);
+	__quicksort_random(begin, p - 1);
+	__quicksort_random(p + 1, end);
 }
 
 void SortVector::__insertion(int begin, int end){
@@ -70,7 +97,7 @@ void SortVector::__merge(string** aux, int begin, int mid, int end){
 }
 
 void SortVector::__hibrid_mergesort(string** aux, int begin, int end){
-	if (end - begin + 1 <= 16) {
+	if (end - begin + 1 <= 24) {
 		__insertion(begin, end);
 	}else{
 		int mid = (begin + end) >> 1;
@@ -258,6 +285,10 @@ void SortVector::Hibrid_MergeSort(){
 
 void SortVector::QuickSort(){
 	__quicksort(0, array.index - 1);
+}
+
+void SortVector::QuickSort_Random(){
+	__quicksort_random(0, array.index - 1);
 }
 
 SortVector::~SortVector(){

@@ -9,9 +9,10 @@ map_sort = {
     "Selectionsort" : array.selection_sort,
     "Insertionsort" : array.insertion_sort,
     "Shellsort" : array.shell_sort,
-    "Quicksort" : array.quick_sort,
-    "Mergesort-Híbrido" : array.hibrid_merge_sort,
     "Mergesort-BottomUp" : array.merge_sort,
+    "Mergesort-Híbrido" : array.hibrid_merge_sort,
+    "Quicksort" : array.quick_sort,
+    "QuickSort Aleatorizado" : array.quick_sort_rand,
     "Heapsort" : array.heap_sort
 }
 
@@ -60,22 +61,22 @@ class SortWorker(QtCore.QThread):
         self.nometxt = nometxt
 
     def run(self):
-        times_sorts = []
+        for i in range(5):
+            times_sorts = []
+            for algorithm, sort in map_sort.items():
+                if algorithm in self.selected_algorithms:
+                    array.copy(unordened_array)
+                    self.progress.emit(f"Ordenando '{self.nometxt}' com {algorithm}... ({i})")
 
-        for algorithm, sort in map_sort.items():
-            if algorithm in self.selected_algorithms:
-                array.copy(unordened_array)
-                self.progress.emit(f"Ordenando '{self.nometxt}' com {algorithm}...")
+                    start = time.time()
+                    sort()
+                    end = time.time()
 
-                start = time.time()
-                sort()
-                end = time.time()
-
-                times_sorts.append((end - start) * 1000)
-            else:
-                times_sorts.append(None)
+                    times_sorts.append((end - start) * 1000)
+                else:
+                    times_sorts.append(None)
         
-        self.finished.emit(times_sorts)
+            self.finished.emit(times_sorts)
 
 class myButton(QtWidgets.QPushButton):
     def __init__(self, name:str, w, h, clicked = None):
@@ -111,7 +112,7 @@ class myWidget(QtWidgets.QWidget):
 
     def define_data(self):
         self.squares = ["Bubblesort", "Selectionsort", "Insertionsort"]
-        self.linearithmics = ["Shellsort", "Mergesort-BottomUp", "Quicksort", "Heapsort", "Mergesort-Híbrido"]
+        self.linearithmics = ["Shellsort",  "Mergesort-BottomUp", "Mergesort-Híbrido","Quicksort", "QuickSort Aleatorizado", "Heapsort"]
         self.files = ["nomes100k.txt", "nomes250k.txt", "nomes500k.txt", "nomes1m.txt"]
         self.groups = [
             "Bubblesort x Selection x Insertion", 

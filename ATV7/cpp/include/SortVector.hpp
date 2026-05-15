@@ -2,6 +2,7 @@
 #define PET_HPP
 
 #include <string>
+
 #include <iostream>
 using namespace std;
 
@@ -29,6 +30,7 @@ public:
 	void MergeSort_BottomUp();
 	void Hibrid_MergeSort();
 	void QuickSort();
+	void QuickSort_Random();
 	void clear();
 	~SortVector();
 	
@@ -36,11 +38,13 @@ private:
 	struct Array array;
 	void realoc();
 	int partition(int begin, int end);
+	int partition_random(int begin, int end);
 	void sink(int k, int n);
 	void __insertion(int begin, int end);
     void __merge(string** aux, int begin, int mid, int end);
 	void __hibrid_mergesort(string** aux, int begin, int end);
 	void __quicksort(int begin, int end);
+	void __quicksort_random(int begin, int end);
 };
 
 #endif
