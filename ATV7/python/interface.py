@@ -21,6 +21,8 @@ def string_cleaner(string):
     for c in clean:
         if not unicodedata.combining(c):
             clean_string += c
+    clean_string = re.sub(r'[^a-zA-Z\s]', '', clean_string)
+
     return clean_string
 
 def fwrite(name, array):
