@@ -122,6 +122,8 @@ void SortVector::clear(){
 		delete array.data[i];
 	array.index = 0;
 	array.capacity = MIN_CAPACITY;
+	delete [] array.data;
+	array.data = new string*[array.capacity];
 }
 
 void SortVector::copy(SortVector* other){

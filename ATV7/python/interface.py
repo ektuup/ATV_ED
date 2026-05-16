@@ -2,6 +2,7 @@ from  PySide6 import QtWidgets, QtCore
 from sortlib import SortVector
 import sys, random, csv, time, os, unicodedata, re
 
+
 array = SortVector()
 unordened_array = SortVector()
 map_sort = {
@@ -15,7 +16,6 @@ map_sort = {
     "QuickSort Aleatorizado" : array.quick_sort_rand,
     "Heapsort" : array.heap_sort
 }
-
 def string_cleaner(string):
     clean = unicodedata.normalize("NFKD", string)
     clean_string = ''
@@ -33,6 +33,7 @@ def fwrite(name, array):
 
 def fread(name, array):
     try:
+        array.clear()
         with open(os.getcwd() + "/nomestxt/" + name, 'r') as f:
             for line in f:
                 pal = string_cleaner(line.strip())
@@ -61,7 +62,12 @@ class SortWorker(QtCore.QThread):
         self.nometxt = nometxt
 
     def run(self):
-        for i in range(5):
+        try:
+            fread(self.nometxt, unordened_array)
+        except FileNotFoundError:
+            self.label.setText(f"Arquivo '{self.nometxt}' não encontrado no diretório ./nomestxt")
+
+        for i in range(1, 6):
             times_sorts = []
             for algorithm, sort in map_sort.items():
                 if algorithm in self.selected_algorithms:
@@ -75,8 +81,11 @@ class SortWorker(QtCore.QThread):
                     times_sorts.append((end - start) * 1000)
                 else:
                     times_sorts.append(None)
+            all_algorithms = [c for c in map_sort.keys()]
+            header = ["Arquivo"] + all_algorithms
+            csv_write("estatisticas_ordenacao.csv", header, [self.nometxt], times_sorts)
         
-            self.finished.emit(times_sorts)
+        self.finished.emit(times_sorts)
 
 class myButton(QtWidgets.QPushButton):
     def __init__(self, name:str, w, h, clicked = None):
@@ -183,11 +192,6 @@ class myWidget(QtWidgets.QWidget):
 
         nometxt = self._file_queue.pop(0)
 
-        try:
-            fread(nometxt, unordened_array)
-        except FileNotFoundError:
-            self.label.setText(f"Arquivo '{nometxt}' não encontrado no diretório ./nomestxt")
-
         self._current_file = nometxt
         self.worker = SortWorker(self.selected_algorithms, nometxt)
         self.worker.progress.connect(self.label.setText)
@@ -201,10 +205,6 @@ class myWidget(QtWidgets.QWidget):
         nometxt_ordened = os.getcwd() + "/nomestxt/" + nometxt[:-4] + "_ordened.txt"
 
         fwrite(nometxt_ordened, array)
-
-        header = ["Arquivo"] + self.squares + self.linearithmics
-        sidebar = [s for s in self.selected_files]
-        csv_write("estatisticas_ordenacao.csv", header, sidebar, times_sorts)
 
         self._run_next_file()
 
