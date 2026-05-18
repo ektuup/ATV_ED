@@ -35,8 +35,8 @@ static PyObject* SortVector_at(SortVectorObject* self, PyObject* args){
     int i;
     if(!PyArg_ParseTuple(args, "i", &i)) return NULL;
 
-    std::string value = self->sort_vector->at(i);
-    return Py_BuildValue("s", value.c_str());
+    std::string* value = self->sort_vector->at(i);
+    return Py_BuildValue("s", value->c_str());
 }
 
 static PyObject* SortVector_len(SortVectorObject* self, PyObject* args){

@@ -8,11 +8,11 @@ using namespace std;
 
 int SortVector::partition(int begin, int end){
 	int i = begin, j = end;
-	string pivo = array.data[i];
+	string* pivo = array.data[i];
 	
 	while(1){
-		while(i <= end && array.data[i] <= pivo) i++;
-		while(j >= begin + 1 && array.data[j] > pivo) j--;
+		while(i <= end && *array.data[i] <= *pivo) i++;
+		while(j >= begin + 1 && *array.data[j] > *pivo) j--;
 		if(i >= j) break;
 		std::swap(array.data[i], array.data[j]);
 		i++, j--;
@@ -25,12 +25,12 @@ int SortVector::partition_random(int begin, int end){
 	int index_pivo = begin + (rand() % (end - begin + 1));
 	std::swap(array.data[index_pivo], array.data[begin]);
 	
-	string pivo = array.data[begin];
+	string* pivo = array.data[begin];
 	int i = begin, j = end;
 	
 	while(1){
-		while(i <= end && array.data[i] <= pivo) i++;
-		while(j >= begin + 1 && array.data[j] > pivo) j--;
+		while(i <= end && *array.data[i] <= *pivo) i++;
+		while(j >= begin + 1 && *array.data[j] > *pivo) j--;
 		if(i >= j) break;
 		std::swap(array.data[i], array.data[j]);
 		i++, j--;
@@ -42,8 +42,8 @@ int SortVector::partition_random(int begin, int end){
 void SortVector::sink(int k, int n){
 	while(2*k + 1 < n){
 		int j = 2*k + 1;
-		if (j < n - 1 && array.data[j] < array.data[j + 1]) j++;
-		if(array.data[k] >= array.data[j]) break;
+		if (j < n - 1 && *array.data[j] < *array.data[j + 1]) j++;
+		if(*array.data[k] >= *array.data[j]) break;
 		std::swap(array.data[k], array.data[j]);
 		k = j;
 	}
@@ -69,9 +69,9 @@ void SortVector::__insertion(int begin, int end){
 	for(int i = begin + 1; i <= end; i++)
 	{
 		int j = i - 1;
-		string current = array.data[i];
+		string* current = array.data[i];
 
-		while(j >= begin && array.data[j] > current){
+		while(j >= begin && *array.data[j] > *current){
 			array.data[j + 1] = array.data[j];
 			j--;
 		}
@@ -80,34 +80,42 @@ void SortVector::__insertion(int begin, int end){
 	}
 }
 
-void SortVector::__merge(string* aux, int begin, int mid, int end){
+void SortVector::__merge(int begin, int mid, int end){
+	int n = end - begin + 1;
+	int n1 = mid - begin + 1;
+	int n2 = end - mid;
+	string** aux = new string*[n];
+    for(int i = 0; i < n; i++)
+        aux[i] = array.data[i + begin];
 
-	int i = begin, j = mid + 1, k = begin;
+	int i = 0, j = mid - begin + 1, k = begin;
 
-	while(i <= mid && j <= end){
-		if(aux[i] <= aux[j]){
+	while(i < n1 && j < n){
+		if(*aux[i] <= *aux[j]){
 			array.data[k++] = aux[i++];
 		}else{
 			array.data[k++] = aux[j++];
 		}
 	}
 
-	while(i <= mid) array.data[k++] = aux[i++];
-	while(j <= end) array.data[k++] = aux[j++];
+	while(i < n1) array.data[k++] = aux[i++];
+	while(j < n) array.data[k++] = aux[j++];
+
+	delete[] aux;
 }
 
-void SortVector::__hibrid_mergesort(string* aux, int begin, int end){
+void SortVector::__hibrid_mergesort(int begin, int end){
 	if (end - begin + 1 <= 24) {
 		__insertion(begin, end);
 	}else{
 		int mid = (begin + end) >> 1;
-		__hibrid_mergesort(aux, begin, mid);
-		__hibrid_mergesort(aux, mid + 1, end);
-		__merge(aux, begin, mid, end);
+		__hibrid_mergesort(begin, mid);
+		__hibrid_mergesort(mid + 1, end);
+		__merge(begin, mid, end);
 	}
 }
 
-string SortVector::at(int i){
+string* SortVector::at(int i){
 	if(i >= 0 and i < array.index)
 		return array.data[i];
 	return NULL;
@@ -121,31 +129,31 @@ void SortVector::clear(){
 	array.index = 0;
 	array.capacity = MIN_CAPACITY;
 	delete [] array.data;
-	array.data = new string[array.capacity];
+	array.data = new string*[array.capacity];
 }
 
 void SortVector::copy(SortVector* other){
 	clear();
 	for(int i = 0; i < other->len(); i++)
-		insert(other->at(i).c_str());
+		insert(other->at(i)->c_str());
 }
 
 void SortVector::exch(int i, int j){
-	string aux = array.data[i];
+	string* aux = array.data[i];
 	array.data[i] = array.data[j];
 	array.data[j] = aux;
 }
 
 void SortVector::insert(const char* value){
 	realoc();
-	array.data[array.index++] = string(value);
+	array.data[array.index++] = new string(value);
 }
 
 void SortVector::realoc()
 {
 	if(array.index + 1 >= array.capacity){
 		array.capacity *= GROWUP;
-		string *aux_array = new string[array.capacity];
+		string* *aux_array = new string*[array.capacity];
 
 		for(int i = 0; i < array.index; i++)
 			aux_array[i] = array.data[i];
@@ -166,7 +174,7 @@ void SortVector::SelectionSort()
 		int min = i;
 
 		for(int j = i + 1; j < array.index; j++)
-			if(array.data[j] < array.data[min])
+			if(*array.data[j] < *array.data[min])
 				min = j;	
 
 		exch(i, min);
@@ -179,7 +187,7 @@ void SortVector::BubbleSort()
 	for(int i = 0; i < array.index; i++){
 		int swaped = 0;
 		for(int j = 0; j < array.index - 1 - i; j++){
-			if(array.data[j] > array.data[j + 1]){
+			if(*array.data[j] > *array.data[j + 1]){
 				exch(j, j + 1);
 				swaped = 1;
 			}
@@ -191,7 +199,7 @@ void SortVector::BubbleSort()
 void SortVector::ShellSort()
 {
 	int j, i;
-	string aux;
+	string* aux = NULL;
 
 	float k = log(array.index + 1)/log(3);
 	k = floor(k + 0.5);
@@ -201,7 +209,7 @@ void SortVector::ShellSort()
 	{
 		for(int i = 0; i < array.index - h; i++)
 		{
-			if(array.data[i] > array.data[i + h])
+			if(*array.data[i] > *array.data[i + h])
 			{
 				aux = array.data[i + h];
 				array.data[i + h] = array.data[i];
@@ -209,7 +217,7 @@ void SortVector::ShellSort()
 				j = i - h;
 				while(j >= 0)
 				{
-					if(aux < array.data[j])
+					if(*aux < *array.data[j])
 					{
 						array.data[j + h] = array.data[j];
 						array.data[j] = aux;
@@ -241,7 +249,7 @@ void SortVector::MergeSort_BottomUp()
 	if (array.index <= 1) return;
 
 	int n = array.index;
-	string* temp = new string[n];
+	string** temp = new string*[n];
 
 	for (int bloco = 1; bloco < n; bloco *= 2) 
 	{
@@ -256,7 +264,7 @@ void SortVector::MergeSort_BottomUp()
 			int idx_temp = left;
 
 			while (idx_esq < mid && idx_dir < right) {
-				if (array.data[idx_esq] <= array.data[idx_dir])
+				if (*array.data[idx_esq] <= *array.data[idx_dir])
 					temp[idx_temp++] = array.data[idx_esq++];
 				else
 					temp[idx_temp++] = array.data[idx_dir++];
@@ -275,12 +283,7 @@ void SortVector::MergeSort_BottomUp()
 }
 
 void SortVector::Hibrid_MergeSort(){
-	string* aux = new string[array.index];
-	for(int i = 0; i < array.index; i++){
-		aux[i] = array.data[i];
-	}
-	__hibrid_mergesort(aux, 0, array.index - 1);
-	delete[] aux;
+	__hibrid_mergesort(0, array.index - 1);
 }
 
 void SortVector::QuickSort(){
@@ -292,6 +295,9 @@ void SortVector::QuickSort_Random(){
 }
 
 SortVector::~SortVector(){
+	for(int i = 0; i < array.index; i++){
+		delete array.data[i];
+	}
 	delete[] array.data;
 	array.data = NULL;
 }

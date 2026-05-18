@@ -1,10 +1,12 @@
 from  PySide6 import QtWidgets, QtCore
 from sortlib import SortVector
 import sys, random, csv, time, os, unicodedata, re
+import graphs
 
 
 array = SortVector()
 unordened_array = SortVector()
+
 map_sort = {
     "Bubblesort" : array.bubble_sort,
     "Selectionsort" : array.selection_sort,
@@ -38,6 +40,7 @@ def fread(name, array):
             for line in f:
                 pal = string_cleaner(line.strip())
                 array.insert(pal)
+
     except FileNotFoundError:
         raise FileNotFoundError
         
@@ -67,23 +70,22 @@ class SortWorker(QtCore.QThread):
         except FileNotFoundError:
             self.label.setText(f"Arquivo '{self.nometxt}' não encontrado no diretório ./nomestxt")
 
-        for i in range(1, 6):
-            times_sorts = []
-            for algorithm, sort in map_sort.items():
-                if algorithm in self.selected_algorithms:
-                    array.copy(unordened_array)
-                    self.progress.emit(f"Ordenando '{self.nometxt}' com {algorithm}... ({i})")
+        times_sorts = []
+        for algorithm, sort in map_sort.items():
+            if algorithm in self.selected_algorithms:
+                array.copy(unordened_array)
+                self.progress.emit(f"Ordenando '{self.nometxt}' com {algorithm}...")
 
-                    start = time.time()
-                    sort()
-                    end = time.time()
+                start = time.time()
+                sort()
+                end = time.time()
 
-                    times_sorts.append((end - start) * 1000)
-                else:
-                    times_sorts.append(None)
-            all_algorithms = [c for c in map_sort.keys()]
-            header = ["Arquivo"] + all_algorithms
-            csv_write("estatisticas_ordenacao.csv", header, [self.nometxt], times_sorts)
+                times_sorts.append((end - start) * 1000)
+            else:
+                times_sorts.append(None)
+        all_algorithms = [c for c in map_sort.keys()]
+        header = ["Arquivo"] + all_algorithms
+        csv_write("estatisticas_ordenacao.csv", header, [self.nometxt], times_sorts)
         
         self.finished.emit(times_sorts)
 
@@ -104,7 +106,7 @@ class myWidget(QtWidgets.QWidget):
 
         self.file_button = myButton("Selecionar Arquivo", 200, 30, self.choice_file)
         self.sort_button = myButton("Métodos de Ordenação", 200, 30, self.choice_group)
-        self.show_graph = myButton("Mostrar Gráfico", 200, 30)
+        self.show_graph = myButton("Mostrar Gráfico", 200, 30, self.choice_graph)
 
         self.grid = QtWidgets.QGridLayout(self)
         self.grid.setAlignment(QtCore.Qt.AlignCenter)
@@ -159,6 +161,25 @@ class myWidget(QtWidgets.QWidget):
             return self.choice_squares()
         elif grp == self.groups[1]:
             return self.choice_linearithmics()
+        
+
+    def dialog_graph(self):
+        grp, ok = QtWidgets.QInputDialog.getItem(
+            self,
+            "seleção",
+            "escolha um grupo",
+            self.groups,
+            0,
+            False
+        )
+        if not ok:
+            return
+        if grp == self.groups[0]:
+            print('chamando regressão quadratica')
+            return graphs.plot_graph(graphs.quadratic_regression)
+        elif grp == self.groups[1]:
+            return graphs.plot_graph(graphs.linearitmic_regression)
+
 
     def choice_file(self):
         self.selected_files = self.checkbox_file()
@@ -185,6 +206,14 @@ class myWidget(QtWidgets.QWidget):
         self.selected_algorithms = self.dialog_groups()
         self._file_queue = list(self.selected_files)
         self._run_next_file()
+
+    def choice_graph(self):
+        if not os.path.exists('estatisticas_ordenacao.csv'):
+            self.label.setText("'estatisticas_ordenacao.csv/' não encontrado no diretório atual")
+            return
+        graph = self.dialog_graph()
+        print(graph)
+
 
     def _run_next_file(self):
         if not self._file_queue:

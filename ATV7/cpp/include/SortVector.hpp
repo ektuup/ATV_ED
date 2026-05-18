@@ -11,12 +11,12 @@ using namespace std;
 struct Array{
 	int capacity = MIN_CAPACITY;
 	int index = 0;
-	string *data = new string[capacity];
+	string **data = new string*[capacity];
 };
 
 class SortVector {
 public:
-	string at(int i);
+	string* at(int i);
 	int len();
 	void exch(int i, int j);
 	void copy(SortVector* other);
@@ -40,8 +40,8 @@ private:
 	int partition_random(int begin, int end);
 	void sink(int k, int n);
 	void __insertion(int begin, int end);
-    void __merge(string* aux, int begin, int mid, int end);
-	void __hibrid_mergesort(string* aux, int begin, int end);
+    void __merge(int begin, int mid, int end);
+	void __hibrid_mergesort(int begin, int end);
 	void __quicksort(int begin, int end);
 	void __quicksort_random(int begin, int end);
 };
