@@ -13,6 +13,7 @@ map_sort = {
     "Insertionsort" : array.insertion_sort,
     "Shellsort" : array.shell_sort,
     "Mergesort-BottomUp" : array.merge_sort,
+    "Mergesort-TopDown" : array.merge_sort_topdown,
     "Mergesort-Híbrido" : array.hibrid_merge_sort,
     "Quicksort" : array.quick_sort,
     "QuickSort Aleatorizado" : array.quick_sort_rand,
@@ -123,7 +124,7 @@ class myWidget(QtWidgets.QWidget):
 
     def define_data(self):
         self.squares = ["Bubblesort", "Selectionsort", "Insertionsort"]
-        self.linearithmics = ["Shellsort",  "Mergesort-BottomUp", "Mergesort-Híbrido","Quicksort", "QuickSort Aleatorizado", "Heapsort"]
+        self.linearithmics = ["Shellsort",  "Mergesort-BottomUp", "Mergesort-TopDown","Mergesort-Híbrido","Quicksort", "QuickSort Aleatorizado", "Heapsort"]
         self.files = ["nomes100k.txt", "nomes250k.txt", "nomes500k.txt", "nomes1m.txt"]
         self.groups = [
             "Bubblesort x Selection x Insertion", 

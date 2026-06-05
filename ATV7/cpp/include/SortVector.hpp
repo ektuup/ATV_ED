@@ -27,6 +27,7 @@ public:
 	void ShellSort();
 	void HeapSort();
 	void MergeSort_BottomUp();
+	void MergeSort_TopDown();
 	void Hibrid_MergeSort();
 	void QuickSort();
 	void QuickSort_Random();
@@ -44,6 +45,7 @@ private:
 	void __hibrid_mergesort(int begin, int end);
 	void __quicksort(int begin, int end);
 	void __quicksort_random(int begin, int end);
+	void __mergesort_topdown(int begin, int end);
 };
 
 #endif

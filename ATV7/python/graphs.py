@@ -8,6 +8,7 @@ all_algorithms = [
     "Insertionsort",
     "Shellsort" ,
     "Mergesort-BottomUp",
+    "Mergesort-TopDown",
     "Mergesort-Híbrido",
     "Quicksort" ,
     "QuickSort Aleatorizado",

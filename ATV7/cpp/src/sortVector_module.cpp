@@ -86,6 +86,13 @@ static PyObject* SortVector_MergeSort(SortVectorObject* self, PyObject* args){
     Py_RETURN_NONE;
 }
  
+static PyObject* SortVector_MergeSort_TopDown(SortVectorObject* self, PyObject* args){
+    Py_BEGIN_ALLOW_THREADS
+    self->sort_vector->MergeSort_TopDown();
+    Py_END_ALLOW_THREADS
+    Py_RETURN_NONE;
+}
+
 static PyObject* SortVector_Hibrid_MergeSort(SortVectorObject* self, PyObject* args){
     Py_BEGIN_ALLOW_THREADS
     self->sort_vector->Hibrid_MergeSort();
@@ -142,6 +149,7 @@ static PyObject* SortVector_exchange(SortVectorObject* self, PyObject* args){
     {"selection_sort", (PyCFunction)SortVector_SelectionSort, METH_NOARGS, "Ordena usando SelectionSort"},
     {"insertion_sort", (PyCFunction)SortVector_InsertionSort, METH_NOARGS, "Ordena usando InsertionSort"},
     {"merge_sort", (PyCFunction)SortVector_MergeSort, METH_NOARGS, "Ordena usando MergeSort"},
+    {"merge_sort_topdown", (PyCFunction)SortVector_MergeSort_TopDown, METH_NOARGS, "Ordena usando MergeSort"},
     {"hibrid_merge_sort", (PyCFunction)SortVector_Hibrid_MergeSort, METH_NOARGS, "Ordena usando MergeSort hibrido com insertion"},
     {NULL, NULL, 0, NULL}
 

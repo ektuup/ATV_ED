@@ -115,6 +115,19 @@ void SortVector::__hibrid_mergesort(int begin, int end){
 	}
 }
 
+void SortVector::__mergesort_topdown(int begin, int end){
+	if (end <= begin) {
+		return;
+	}else{
+		int mid = (begin + end) >> 1;
+		printf("begin=%d mid=%d end=%d n=%d\n", begin, mid, end, array.index);
+		fflush(stdout);
+		__mergesort_topdown(begin, mid);
+		__mergesort_topdown(mid + 1, end);
+		__merge(begin, mid, end);
+	}
+}
+
 string* SortVector::at(int i){
 	if(i >= 0 and i < array.index)
 		return array.data[i];
@@ -284,6 +297,10 @@ void SortVector::MergeSort_BottomUp()
 
 void SortVector::Hibrid_MergeSort(){
 	__hibrid_mergesort(0, array.index - 1);
+}
+
+void SortVector::MergeSort_TopDown(){
+	__mergesort_topdown(0, array.index - 1);
 }
 
 void SortVector::QuickSort(){
