@@ -168,7 +168,7 @@ class BST:
     def is_balanced(self):
         return self._is_balanced(self.root)
     
-    def internalPathLength(self):
+    def internal_path_length(self):
         dq = Queue()
         dq.enqueue((self.root, 0))
         cont = 0
@@ -197,7 +197,7 @@ if __name__ == '__main__':
     print(bt.height(bt.root))
     print(bt.depth(12, bt.root))
     print(bt.is_balanced())
-    print(bt.internalPathLength())
+    print(bt.internal_path_length())
     print(bt.size())
     print(bt.max())
     print(bt.min())
