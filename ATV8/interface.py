@@ -276,9 +276,3 @@ class MainWindow(QWidget):
                 color: white;
             }
         """)
-
-
-app = QApplication(sys.argv)
-win = MainWindow()
-win.show()
-app.exec()
