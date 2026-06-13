@@ -59,7 +59,8 @@ class MainWindow(QWidget):
         super().__init__()
 
         self.bst = bst()
-        
+        self.bst_reversed = False
+
         self.setWindowTitle("Binary Search Tree GUI")
         self.grid = QGridLayout(self)
         self.resize(900, 480)
@@ -127,12 +128,16 @@ class MainWindow(QWidget):
         win.exec()
 
     def inverter(self):
-        self.bst.reverse(self.bst.root)
+        if not self.bst_reversed:
+            self.bst.reverse(self.bst.root)
         if self.bst.root == None:
             self.image_label.setPixmap(QPixmap())
             return
+        self.bst_reversed = True
         render_bst(self.bst)
         self.image_label.setPixmap(QPixmap('bst_output.png'))
+
+        self.bst.reverse(self.bst.root) ##inverte a bst de novo depois de mostrar, pra não afetar inserção e busca
 
     def remover(self):
         num = self.input_line.text()

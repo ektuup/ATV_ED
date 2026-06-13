@@ -36,7 +36,7 @@ class bst:
         while aux:
             if key == aux.key:
                 return True
-            elif key < aux.key:       
+            elif key < aux.key:
                 aux = aux.left
             else:
                 aux = aux.right
