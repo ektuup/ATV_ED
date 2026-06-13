@@ -108,6 +108,10 @@ class MainWindow(QWidget):
 
         return win
 
+    def show_bst(self):
+        render_bst(self.bst)
+        self.image_label.setPixmap(QPixmap('bst_output.png'))
+
     def show_dialog_window(self, text, icon):
         win = QDialog(self)
         win.setFixedSize(260, 160)
@@ -134,12 +138,10 @@ class MainWindow(QWidget):
 
         if not self.bst_reversed:
             self.bst.reverse(self.bst.root)
-            render_bst(self.bst)
-            self.image_label.setPixmap(QPixmap('bst_output.png'))
+            self.show_bst()
             self.bst.reverse(self.bst.root)
         else:
-            render_bst(self.bst)
-            self.image_label.setPixmap(QPixmap('bst_output.png'))
+            self.show_bst()
 
         self.bst_reversed = not self.bst_reversed
 
@@ -162,8 +164,7 @@ class MainWindow(QWidget):
         if self.bst.root == None:
             self.image_label.setPixmap(QPixmap())
             return
-        render_bst(self.bst)
-        self.image_label.setPixmap(QPixmap('bst_output.png'))
+        self.show_bst()
         self.input_line.clear()
         self.set_descriptions()
 
@@ -192,8 +193,7 @@ class MainWindow(QWidget):
         num = self.input_line.text()
         self.bst.put(int(num))
 
-        render_bst(self.bst)
-        self.image_label.setPixmap(QPixmap('bst_output.png'))
+        self.show_bst()
         self.input_line.clear()
         self.set_descriptions()
     
