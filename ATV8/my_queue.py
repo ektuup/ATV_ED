@@ -19,8 +19,8 @@ class Queue:
         self.tail = new
     
     def dequeue(self):
-        if self.front == None:
-            return
+        if self.empty():
+            return 
         value = self.front.data
         self.front = self.front.next
 
