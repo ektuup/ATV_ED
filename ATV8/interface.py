@@ -22,7 +22,7 @@ def visualize_bst(bst, dot=None):
         if nv > 3:
             break
 
-        dot.node(str(node.key), shape='circle', bgcolor='#ffffff', style='filled', fillcolor='#ffffff')
+        dot.node(str(node.key), shape='circle', style='filled', fillcolor='#ffffff')
 
         if node.left and nv + 1 <= 3:
             dot.edge(str(node.key), str(node.left.key), color='blue')
@@ -63,7 +63,7 @@ class MainWindow(QWidget):
 
         self.setWindowTitle("Binary Search Tree GUI")
         self.grid = QGridLayout(self)
-        self.resize(900, 480)
+        self.resize(900, 560)
         self.image_label = QLabel()
         self.text_label = QLabel()
 
@@ -128,16 +128,20 @@ class MainWindow(QWidget):
         win.exec()
 
     def inverter(self):
-        if not self.bst_reversed:
-            self.bst.reverse(self.bst.root)
         if self.bst.root == None:
             self.image_label.setPixmap(QPixmap())
             return
-        self.bst_reversed = True
-        render_bst(self.bst)
-        self.image_label.setPixmap(QPixmap('bst_output.png'))
 
-        self.bst.reverse(self.bst.root) ##inverte a bst de novo depois de mostrar, pra não afetar inserção e busca
+        if not self.bst_reversed:
+            self.bst.reverse(self.bst.root)
+            render_bst(self.bst)
+            self.image_label.setPixmap(QPixmap('bst_output.png'))
+            self.bst.reverse(self.bst.root)
+        else:
+            render_bst(self.bst)
+            self.image_label.setPixmap(QPixmap('bst_output.png'))
+
+        self.bst_reversed = not self.bst_reversed
 
     def remover(self):
         num = self.input_line.text()

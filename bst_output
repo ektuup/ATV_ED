@@ -1,0 +1,17 @@
+digraph {
+	ordering=out
+	5 [bgcolor="#ff0000" shape=circle]
+	5 -> 0 [color=blue]
+	5 -> 6 [color=blue]
+	0 [bgcolor="#ff0000" shape=circle]
+	6 [bgcolor="#ff0000" shape=circle]
+	lbl_6 [style=invis]
+	6 -> lbl_6 [style=invis]
+	6 -> 7 [color=blue]
+	7 [bgcolor="#ff0000" shape=circle]
+	lbl_7 [style=invis]
+	7 -> lbl_7 [style=invis]
+	7 -> 8 [color=blue]
+	8 [bgcolor="#ff0000" shape=circle]
+	bgcolor="#1A1A1A" ratio=fill
+}
