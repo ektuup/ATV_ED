@@ -107,6 +107,25 @@ class MainWindow(QWidget):
 
         return win
 
+    def show_dialog_window(self, text, icon):
+        win = QDialog(self)
+        win.setFixedSize(260, 160)
+        win.setStyleSheet("background-color: #1A1A1A;")
+
+        labl_icone = QLabel()
+        icone = self.style().standardIcon(icon)
+
+        label = QLabel()
+        label.setText(text)
+
+        labl_icone.setPixmap(icone.pixmap(40, 40))
+        layout = QVBoxLayout()
+        layout.addWidget(labl_icone, alignment=Qt.AlignCenter)
+        layout.addWidget(label, alignment=Qt.AlignCenter)
+        win.setLayout(layout)
+
+        win.exec()
+
     def inverter(self):
         self.bst.reverse(self.bst.root)
         if self.bst.root == None:
@@ -121,9 +140,15 @@ class MainWindow(QWidget):
             return
         self.set_descriptions()
 
-        win = self.window_confirm(f"Tem certeza que deseja remover o valor '{num}' da árvore?")
-        if win.exec() == QDialog.DialogCode.Accepted:
-            self.bst.remove(int(num))
+        if self.bst.find(int(num)):
+            win = self.window_confirm(f"Tem certeza que deseja remover o valor '{num}' da árvore?")
+            if win.exec() == QDialog.DialogCode.Accepted:
+                self.bst.remove(int(num))
+        else:
+            self.show_dialog_window(
+                f"O valor '{num}' não foi encontrado.", 
+                self.style().StandardPixmap.SP_DialogCancelButton
+            )
 
         if self.bst.root == None:
             self.image_label.setPixmap(QPixmap())
@@ -197,23 +222,17 @@ class MainWindow(QWidget):
         
         nv = self.bst.depth(int(num), self.bst.root)
 
-        label = QLabel()
-
+        print(nv)
         if nv < 0:
-            icone = self.style().standardIcon(self.style().StandardPixmap.SP_DialogCancelButton)
-            label.setText(f"O valor '{num}' não foi encontrado na árvore.")
+            self.show_dialog_window(
+                f"O valor '{num}' não foi encontrado", 
+                self.style().StandardPixmap.SP_DialogCancelButton
+            )
         else:
-            icone = self.style().standardIcon(self.style().StandardPixmap.SP_DialogApplyButton)
-            label.setText(f"valor '{num}' está na árvore.\n Profundidade: {nv}")   
-
-        lbl_icone = QLabel()
-        lbl_icone.setPixmap(icone.pixmap(40, 40))
-        layout = QVBoxLayout()
-        layout.addWidget(lbl_icone, alignment=Qt.AlignCenter)
-        layout.addWidget(label, alignment=Qt.AlignCenter | Qt.AlignTop)
-        win.setLayout(layout)
-
-        win.exec()
+            self.show_dialog_window(
+                f"O valor '{num}' está na árvore.\nProfundidade: {nv}", 
+                self.style().StandardPixmap.SP_DialogApplyButton
+            )
         self.input_line.clear()
 
     def set_descriptions(self):

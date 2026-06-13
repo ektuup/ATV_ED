@@ -196,10 +196,10 @@ class bst:
 
     def remove(self, key):
         if self.root == None:
-            return
+            return 0
         if self.root.key == key:
             self.root = self.remove_root(self.root)
-            return
+            return 1
 
         aux = self.root
         p = None
@@ -210,13 +210,14 @@ class bst:
             aux = aux.left if key < aux.key else aux.right
             
         if p == None:
-            return
+            return 0
 
         if p.left and p.left.key == key:
             p.left = self.remove_root(p.left)
         else: 
             p.right = self.remove_root(p.right)
-   
+        return 1
+    
     def reverse(self, root):
         if root == None:
             return
