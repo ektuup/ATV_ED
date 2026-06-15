@@ -1,5 +1,5 @@
 from my_queue import Queue
-
+import numpy as np
 class Node:
     def __init__(self, key):
         self.key = key
@@ -47,7 +47,7 @@ class bst:
             return ""
 
         s = self.in_order(root.left)
-        s += str(root.key) + " "  
+        s += str(root.key) + "\n"  
         s += self.in_order(root.right)
         return s
 
@@ -58,7 +58,7 @@ class bst:
 
         s = self.pos_order(root.left)
         s += self.pos_order(root.right)
-        s += str(root.key) + " "  
+        s += str(root.key) + "\n"  
         return s 
 
 
@@ -66,7 +66,7 @@ class bst:
         if(root == None):
             return ""
 
-        s = str(root.key) + " " 
+        s = str(root.key) + "\n" 
         s += self.pre_order(root.left)
         s += self.pre_order(root.right)
         
@@ -81,7 +81,7 @@ class bst:
 
         while not dq.empty():
             aux = dq.dequeue()
-            s += f"{aux.key} "
+            s += f"{aux.key}\n"
 
             if aux.left:
                 dq.enqueue(aux.left)
@@ -228,6 +228,33 @@ class bst:
         t = root.left
         root.left = root.right
         root.right = t    
+
+    def average_cost(self):
+        return  self.internalPathLength()/self.size(self.root) + 1 #numero de comparações médio numa busca
+
+    def variance(self):
+        if self.root == None:
+            return 
+
+        mean = self.average_cost()
+        n = self.size(self.root)
+
+        dq = Queue()
+        dq.enqueue((self.root, 1)) #começa com 1 comparação
+        var = 0
+        while not dq.empty():
+            node, d = dq.dequeue()
+            var += (d - mean)**2
+            
+            if node.left:
+                dq.enqueue((node.left, d + 1))
+            if node.right:
+                dq.enqueue((node.right, d + 1))
+    
+        return var/n
+
+
+
 
 
 
